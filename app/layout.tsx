@@ -1,4 +1,5 @@
 import { Plus_Jakarta_Sans, Tajawal } from "next/font/google";
+
 import "./globals.css";
 
 import type { Metadata } from "next";
