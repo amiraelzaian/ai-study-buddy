@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { supabase } from "@/app/_lib/supabase";
 
+// setup
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 const DAILY_LIMIT = 20;
 
@@ -51,10 +52,13 @@ export async function POST(request: Request) {
         .from("ai_usage")
         .insert({ user_id: userId, daily_count: 0, last_reset: today });
     }
+
     // =================== 2. Get history ===================
 
     let history: { role: string; text: string }[] = [];
     let currentConversationId = conversationId;
+
+    let generatedTitle: string | null = null;
 
     if (conversationId) {
       // old conversation
@@ -70,10 +74,38 @@ export async function POST(request: Request) {
           text: m.content,
         })) || [];
     } else {
-      // new conversation
+      // =================== NEW CONVERSATION ===================
+
+      // 1. Generate title using Gemini
+      const titlePrompt = `
+Generate a short title (3 to 6 words max) for this conversation.
+
+Question:
+${question}
+
+Rules:
+- Very short
+- No punctuation
+- No quotes
+- Must describe topic clearly
+`;
+
+      const model = genAI.getGenerativeModel({
+        model: "gemini-1.5-flash",
+      });
+
+      const titleResult = await model.generateContent(titlePrompt);
+      generatedTitle = titleResult.response.text().trim();
+
+      // 2. Create conversation in DB with title
       const { data: newConversation } = await supabase
         .from("conversation")
-        .insert({ user_id: userId, subject, mode })
+        .insert({
+          user_id: userId,
+          subject,
+          mode,
+          title: generatedTitle,
+        })
         .select()
         .single();
 
@@ -112,13 +144,77 @@ export async function POST(request: Request) {
           {
               "front": "Question or term",
               "back": "Answer or definition"
-            }
-            ]
+    }]
+    }
       `,
     };
     const prompt = prompts[mode] || prompts.explain;
 
     // =================== 4. Call Gemini===================
+
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    let answer = "";
+
+    if (history.length > 0) {
+      const chat = model.startChat({
+        history: history.map((msg) => ({
+          role: msg.role,
+          parts: [{ text: msg.text }],
+        })),
+      });
+
+      const result = await chat.sendMessage(prompt);
+      answer = result.response.text();
+    } else {
+      const result = await model.generateContent(prompt);
+      answer = result.response.text();
+    }
+    // =================== 5. Save Messages ===================
+
+    await supabase.from("messages").insert([
+      {
+        conversation_id: currentConversationId,
+        role: "user",
+        content: question,
+      },
+      {
+        conversation_id: currentConversationId,
+        role: "model",
+        content: answer,
+      },
+    ]);
+
+    // =================== 6. Update Count===================
+
+    await supabase
+      .from("ai_usage")
+      .update({
+        daily_count: (usage?.daily_count || 0) + 1,
+      })
+      .eq("user_id", userId);
+
+    // =================== 7. Parse JSON if needed ===================
+
+    if (mode === "quiz" || mode === "flashcard") {
+      try {
+        const clean = answer.replace(/```json|```/g, "").trim();
+        const parsed = JSON.parse(clean);
+        return NextResponse.json({
+          ...parsed,
+          mode,
+          conversationId: currentConversationId,
+          remaining: DAILY_LIMIT - (usage?.daily_count || 0) - 1,
+        });
+      } catch (error) {
+        console.error("Response is Text not json", error);
+      }
+    }
+    return NextResponse.json({
+      answer,
+      mode,
+      conversationId: currentConversationId,
+      remaining: DAILY_LIMIT - (usage?.daily_count || 0) - 1,
+    });
   } catch (error) {
     console.error("AI Error:", error);
     return NextResponse.json(
