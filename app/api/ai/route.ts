@@ -2,10 +2,51 @@ import { NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { supabase } from "@/app/_lib/supabase";
 
-// setup
+// =================== SETUP ===================
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+
 const DAILY_LIMIT = 20;
 
+// Fallback models
+const MODELS = [
+  "gemini-2.0-flash",
+  "gemini-2.0-flash-lite",
+  "gemini-1.5-flash-8b",
+];
+
+async function generateWithFallback(prompt: string) {
+  for (const modelName of MODELS) {
+    try {
+      const model = genAI.getGenerativeModel({ model: modelName });
+      const result = await model.generateContent(prompt);
+      return result.response.text();
+    } catch (e: any) {
+      console.warn(`Model ${modelName} failed:`, e.message);
+      continue;
+    }
+  }
+  throw new Error("All models failed");
+}
+
+async function chatWithFallback(
+  history: { role: string; parts: { text: string }[] }[],
+  prompt: string,
+) {
+  for (const modelName of MODELS) {
+    try {
+      const model = genAI.getGenerativeModel({ model: modelName });
+      const chat = model.startChat({ history });
+      const result = await chat.sendMessage(prompt);
+      return result.response.text();
+    } catch (e: any) {
+      console.warn(`Model ${modelName} failed:`, e.message);
+      continue;
+    }
+  }
+  throw new Error("All models failed");
+}
+
+// =================== API ROUTE ===================
 export async function POST(request: Request) {
   try {
     const { question, subject, mode, userId, conversationId } =
@@ -20,26 +61,22 @@ export async function POST(request: Request) {
 
     const today = new Date().toISOString().split("T")[0];
 
-    // =================== 1. Check Limit ===================
+    // =================== 1. CHECK LIMIT ===================
     const { data: usage } = await supabase
       .from("ai_usage")
       .select("*")
       .eq("user_id", userId)
-      .single();
+      .maybeSingle();
 
     if (usage) {
-      // if new day
       if (usage.last_reset !== today) {
         await supabase
           .from("ai_usage")
-          .update({
-            daily_count: 0,
-            last_reset: today,
-          })
+          .update({ daily_count: 0, last_reset: today })
           .eq("user_id", userId);
         usage.daily_count = 0;
       }
-      // check limit: limit reached?
+
       if (usage.daily_count >= DAILY_LIMIT) {
         return NextResponse.json(
           { error: "Daily limit reached", limit: DAILY_LIMIT },
@@ -47,21 +84,16 @@ export async function POST(request: Request) {
         );
       }
     } else {
-      // first time to record
       await supabase
         .from("ai_usage")
         .insert({ user_id: userId, daily_count: 0, last_reset: today });
     }
 
-    // =================== 2. Get history ===================
-
-    let history: { role: string; text: string }[] = [];
+    // =================== 2. HISTORY ===================
+    let history: { role: string; parts: { text: string }[] }[] = [];
     let currentConversationId = conversationId;
 
-    let generatedTitle: string | null = null;
-
     if (conversationId) {
-      // old conversation
       const { data: messages } = await supabase
         .from("messages")
         .select("*")
@@ -71,106 +103,70 @@ export async function POST(request: Request) {
       history =
         messages?.map((m) => ({
           role: m.role,
-          text: m.content,
+          parts: [{ text: m.content }],
         })) || [];
     } else {
-      // =================== NEW CONVERSATION ===================
-
-      // 1. Generate title using Gemini
-      const titlePrompt = `
-Generate a short title (3 to 6 words max) for this conversation.
-
-Question:
-${question}
-
-Rules:
-- Very short
-- No punctuation
-- No quotes
-- Must describe topic clearly
-`;
-
-      const model = genAI.getGenerativeModel({
-        model: "gemini-1.5-flash",
-      });
-
-      const titleResult = await model.generateContent(titlePrompt);
-      generatedTitle = titleResult.response.text().trim();
-
-      // 2. Create conversation in DB with title
       const { data: newConversation } = await supabase
-        .from("conversation")
-        .insert({
-          user_id: userId,
-          subject,
-          mode,
-          title: generatedTitle,
-        })
+        .from("conversations")
+        .insert({ user_id: userId, subject, mode })
         .select()
-        .single();
+        .maybeSingle();
 
       currentConversationId = newConversation?.id;
     }
-    // =================== 3.Build prompt ===================
 
+    // =================== 3. PROMPTS ===================
     const prompts: Record<string, string> = {
-      explain: `You are a helpful study assistant.
-        Subject: ${subject || "General"}
-        Explain the following clearly with examples:
-        ${question}`,
+      explain: `
+You are a helpful study assistant.
+Subject: ${subject || "General"}
+Explain clearly with examples:
+${question}
+      `,
       quiz: `
-      You are a quiz generator.
-      Subject:${subject || "General"}
-      Topic:${question}
-      Generate 10 MCQ guestions in theis exact JSON format:
-       {
-          "questions": [
-            {
-              "question": "...",
-              "options": ["A", "B", "C", "D"],
-              "correct": 0,
-              "explanation": "..."
-            }
-            ]
-            }
-            `,
-      flashcard: `
-            You are a flashcard generator.
-            Subject:${subject || "General"}
-      Topic:${question}
-      Generate 5 flashcards in this exact JSON format:
-      {
-        "flashcards": [
-          {
-              "front": "Question or term",
-              "back": "Answer or definition"
-    }]
+You are a quiz generator.
+Subject: ${subject || "General"}
+Topic: ${question}
+Generate 10 MCQ questions in this exact JSON format only, no extra text:
+{
+  "questions": [
+    {
+      "question": "...",
+      "options": ["A", "B", "C", "D"],
+      "correct": 0,
+      "explanation": "..."
     }
+  ]
+}
+      `,
+      flashcard: `
+You are a flashcard generator.
+Subject: ${subject || "General"}
+Topic: ${question}
+Generate 5 flashcards in this exact JSON format only, no extra text:
+{
+  "flashcards": [
+    {
+      "front": "Question or term",
+      "back": "Answer or definition"
+    }
+  ]
+}
       `,
     };
+
     const prompt = prompts[mode] || prompts.explain;
 
-    // =================== 4. Call Gemini===================
-
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    // =================== 4. GEMINI CALL ===================
     let answer = "";
 
     if (history.length > 0) {
-      const chat = model.startChat({
-        history: history.map((msg) => ({
-          role: msg.role,
-          parts: [{ text: msg.text }],
-        })),
-      });
-
-      const result = await chat.sendMessage(prompt);
-      answer = result.response.text();
+      answer = await chatWithFallback(history, prompt);
     } else {
-      const result = await model.generateContent(prompt);
-      answer = result.response.text();
+      answer = await generateWithFallback(prompt);
     }
-    // =================== 5. Save Messages ===================
 
+    // =================== 5. SAVE MESSAGES ===================
     await supabase.from("messages").insert([
       {
         conversation_id: currentConversationId,
@@ -184,17 +180,13 @@ Rules:
       },
     ]);
 
-    // =================== 6. Update Count===================
-
+    // =================== 6. UPDATE USAGE ===================
     await supabase
       .from("ai_usage")
-      .update({
-        daily_count: (usage?.daily_count || 0) + 1,
-      })
+      .update({ daily_count: (usage?.daily_count || 0) + 1 })
       .eq("user_id", userId);
 
-    // =================== 7. Parse JSON if needed ===================
-
+    // =================== 7. RESPONSE ===================
     if (mode === "quiz" || mode === "flashcard") {
       try {
         const clean = answer.replace(/```json|```/g, "").trim();
@@ -205,10 +197,11 @@ Rules:
           conversationId: currentConversationId,
           remaining: DAILY_LIMIT - (usage?.daily_count || 0) - 1,
         });
-      } catch (error) {
-        console.error("Response is Text not json", error);
+      } catch (e) {
+        console.error("JSON parse error:", e);
       }
     }
+
     return NextResponse.json({
       answer,
       mode,

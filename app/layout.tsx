@@ -1,5 +1,6 @@
 import { Plus_Jakarta_Sans, Tajawal } from "next/font/google";
-
+import { Toaster } from "react-hot-toast";
+// @ts-ignore
 import "./globals.css";
 
 import type { Metadata } from "next";
@@ -30,6 +31,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${jakarta.variable} ${tajawal.variable} font-jakarta`}>
         {children}
+        <Toaster position="top-right" />
       </body>
     </html>
   );
