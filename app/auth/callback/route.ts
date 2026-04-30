@@ -5,7 +5,8 @@ export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
   const error = searchParams.get("error");
-
+  console.log("URL:", request.url);
+  console.log("code:", code);
   if (error) {
     console.error("OAuth error:", error);
     return NextResponse.redirect(`${origin}/login?error=${error}`);

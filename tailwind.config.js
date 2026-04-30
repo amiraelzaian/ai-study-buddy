@@ -13,23 +13,32 @@ module.exports = {
         jakarta: ["var(--font-jakarta)", "sans-serif"],
         tajawal: ["var(--font-tajawal)", "sans-serif"],
       },
-
       colors: {
+        // shadcn vars
         background: "var(--background)",
         foreground: "var(--foreground)",
         border: "var(--border)",
-        card: "var(--card)",
-        "card-foreground": "var(--card-foreground)",
-        primary: "var(--primary)",
-        "primary-foreground": "var(--primary-foreground)",
-        secondary: "var(--secondary)",
-        "secondary-foreground": "var(--secondary-foreground)",
-        muted: "var(--muted)",
-        "muted-foreground": "var(--muted-foreground)",
-        accent: "var(--accent)",
-        "accent-foreground": "var(--accent-foreground)",
+        card: {
+          DEFAULT: "var(--card)",
+          foreground: "var(--card-foreground)",
+        },
+        secondary: {
+          DEFAULT: "var(--secondary)",
+          foreground: "var(--secondary-foreground)",
+        },
+        muted: {
+          DEFAULT: "var(--muted)",
+          foreground: "var(--muted-foreground)",
+        },
+        accent: {
+          DEFAULT: "var(--accent)",
+          foreground: "var(--accent-foreground)",
+        },
 
+        // your primary (indigo scale)
         primary: {
+          DEFAULT: "#6366F1",
+          foreground: "var(--primary-foreground)",
           50: "#EEF2FF",
           100: "#E0E7FF",
           200: "#C7D2FE",
@@ -42,6 +51,7 @@ module.exports = {
           900: "#312E81",
         },
 
+        // gray scale
         gray: {
           50: "#FAFAFA",
           100: "#F4F4F5",

@@ -1,12 +1,11 @@
 import { Plus_Jakarta_Sans, Tajawal, Geist } from "next/font/google";
 import { Toaster } from "react-hot-toast";
-// @ts-ignore
 import "./globals.css";
-
 import type { Metadata } from "next";
 import { cn } from "@/lib/utils";
+import { ThemeProvider } from "./_components/ThemePovider";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
   title: "AI Study Buddy",
@@ -31,9 +30,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning className={cn("font-sans", geist.variable)}>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={cn("font-sans", geist.variable)}
+    >
       <body className={`${jakarta.variable} ${tajawal.variable} font-jakarta`}>
-        {children}
+        <ThemeProvider>{children}</ThemeProvider>
         <Toaster position="top-right" />
       </body>
     </html>
