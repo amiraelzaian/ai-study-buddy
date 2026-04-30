@@ -13,19 +13,35 @@ module.exports = {
         jakarta: ["var(--font-jakarta)", "sans-serif"],
         tajawal: ["var(--font-tajawal)", "sans-serif"],
       },
+
       colors: {
+        background: "var(--background)",
+        foreground: "var(--foreground)",
+        border: "var(--border)",
+        card: "var(--card)",
+        "card-foreground": "var(--card-foreground)",
+        primary: "var(--primary)",
+        "primary-foreground": "var(--primary-foreground)",
+        secondary: "var(--secondary)",
+        "secondary-foreground": "var(--secondary-foreground)",
+        muted: "var(--muted)",
+        "muted-foreground": "var(--muted-foreground)",
+        accent: "var(--accent)",
+        "accent-foreground": "var(--accent-foreground)",
+
         primary: {
           50: "#EEF2FF",
           100: "#E0E7FF",
           200: "#C7D2FE",
           300: "#A5B4FC",
           400: "#818CF8",
-          500: "#6366F1", // ← main
+          500: "#6366F1",
           600: "#4F46E5",
           700: "#4338CA",
           800: "#3730A3",
           900: "#312E81",
         },
+
         gray: {
           50: "#FAFAFA",
           100: "#F4F4F5",

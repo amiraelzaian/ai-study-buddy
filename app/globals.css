@@ -1,3 +1,4 @@
+@import "tw-animate-css";
 /* app/globals.css */
 @tailwind base;
 @tailwind components;
@@ -5,52 +6,109 @@
 
 @layer base {
   :root {
-    --background: #fafafa;
+    --background: oklch(1 0 0);
     --background-secondary: #f4f4f5;
-    --card: #ffffff;
+    --card: oklch(1 0 0);
     --card-border: #e4e4e7;
     --text-primary: #18181b;
     --text-secondary: #71717a;
     --text-muted: #a1a1aa;
-    --primary: #6366f1;
+    --primary: oklch(0.205 0 0);
     --primary-hover: #4f46e5;
     --primary-light: #eef2ff;
     --primary-text: #3730a3;
     --success: #22c55e;
     --warning: #f59e0b;
     --error: #ef4444;
-    --border: #e4e4e7;
+    --border: oklch(0.922 0 0);
     --border-hover: #d4d4d8;
+    --foreground: oklch(0.145 0 0);
+    --card-foreground: oklch(0.145 0 0);
+    --popover: oklch(1 0 0);
+    --popover-foreground: oklch(0.145 0 0);
+    --primary-foreground: oklch(0.985 0 0);
+    --secondary: oklch(0.97 0 0);
+    --secondary-foreground: oklch(0.205 0 0);
+    --muted: oklch(0.97 0 0);
+    --muted-foreground: oklch(0.556 0 0);
+    --accent: oklch(0.97 0 0);
+    --accent-foreground: oklch(0.205 0 0);
+    --destructive: oklch(0.577 0.245 27.325);
+    --input: oklch(0.922 0 0);
+    --ring: oklch(0.708 0 0);
+    --chart-1: oklch(0.87 0 0);
+    --chart-2: oklch(0.556 0 0);
+    --chart-3: oklch(0.439 0 0);
+    --chart-4: oklch(0.371 0 0);
+    --chart-5: oklch(0.269 0 0);
+    --radius: 0.625rem;
+    --sidebar: oklch(0.985 0 0);
+    --sidebar-foreground: oklch(0.145 0 0);
+    --sidebar-primary: oklch(0.205 0 0);
+    --sidebar-primary-foreground: oklch(0.985 0 0);
+    --sidebar-accent: oklch(0.97 0 0);
+    --sidebar-accent-foreground: oklch(0.205 0 0);
+    --sidebar-border: oklch(0.922 0 0);
+    --sidebar-ring: oklch(0.708 0 0);
   }
 
   .dark {
-    --background: #18181b;
+    --background: oklch(0.145 0 0);
     --background-secondary: #27272a;
-    --card: #27272a;
+    --card: oklch(0.205 0 0);
     --card-border: #3f3f46;
     --text-primary: #fafafa;
     --text-secondary: #a1a1aa;
     --text-muted: #71717a;
-    --primary: #818cf8;
+    --primary: oklch(0.922 0 0);
     --primary-hover: #6366f1;
     --primary-light: #312e81;
     --primary-text: #c7d2fe;
     --success: #4ade80;
     --warning: #fcd34d;
     --error: #f87171;
-    --border: #3f3f46;
+    --border: oklch(1 0 0 / 10%);
     --border-hover: #52525b;
+    --foreground: oklch(0.985 0 0);
+    --card-foreground: oklch(0.985 0 0);
+    --popover: oklch(0.205 0 0);
+    --popover-foreground: oklch(0.985 0 0);
+    --primary-foreground: oklch(0.205 0 0);
+    --secondary: oklch(0.269 0 0);
+    --secondary-foreground: oklch(0.985 0 0);
+    --muted: oklch(0.269 0 0);
+    --muted-foreground: oklch(0.708 0 0);
+    --accent: oklch(0.269 0 0);
+    --accent-foreground: oklch(0.985 0 0);
+    --destructive: oklch(0.704 0.191 22.216);
+    --input: oklch(1 0 0 / 15%);
+    --ring: oklch(0.556 0 0);
+    --chart-1: oklch(0.87 0 0);
+    --chart-2: oklch(0.556 0 0);
+    --chart-3: oklch(0.439 0 0);
+    --chart-4: oklch(0.371 0 0);
+    --chart-5: oklch(0.269 0 0);
+    --sidebar: oklch(0.205 0 0);
+    --sidebar-foreground: oklch(0.985 0 0);
+    --sidebar-primary: oklch(0.488 0.243 264.376);
+    --sidebar-primary-foreground: oklch(0.985 0 0);
+    --sidebar-accent: oklch(0.269 0 0);
+    --sidebar-accent-foreground: oklch(0.985 0 0);
+    --sidebar-border: oklch(1 0 0 / 10%);
+    --sidebar-ring: oklch(0.556 0 0);
   }
 
   * {
-    border-color: var(--border);
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+    border-color: var(--border);
+    outline-color: hsl(var(--ring) / 0.5);
   }
 
   html {
     scroll-behavior: smooth;
+    @apply font-sans;
   }
 
   body {
@@ -62,6 +120,7 @@
       color 0.3s;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    @apply bg-background text-foreground;
   }
 
   /* Arabic */
@@ -112,6 +171,10 @@
   /* Selection */
   ::selection {
     @apply bg-primary-200 dark:bg-primary-800 text-primary-900 dark:text-primary-100;
+  }
+  .theme {
+    --font-heading: var(--font-sans);
+    --font-sans: var(--font-sans);
   }
 }
 
