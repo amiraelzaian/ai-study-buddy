@@ -20,7 +20,7 @@ export default function Dashboard() {
     };
 
     check();
-  }, []);
+  }, [router]);
 
   if (loading) return <p>Loading...</p>;
 

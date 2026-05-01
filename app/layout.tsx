@@ -35,7 +35,7 @@ export default function RootLayout({
       suppressHydrationWarning
       className={cn("font-sans", geist.variable)}
     >
-      <body className={`${jakarta.variable} ${tajawal.variable} font-jakarta`}>
+      <body className={`${jakarta.variable} ${tajawal.variable} font-jakarta `}>
         <ThemeProvider>{children}</ThemeProvider>
         <Toaster position="top-right" />
       </body>

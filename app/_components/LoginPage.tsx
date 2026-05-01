@@ -25,8 +25,9 @@ type FormData = {
 
 export default function LoginPage() {
   const router = useRouter();
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [googling, setGoogling] = useState<boolean>(false);
 
   const {
     register,
@@ -50,13 +51,13 @@ export default function LoginPage() {
   }
 
   async function handleGoogleLogin() {
-    setLoading(true);
+    setGoogling(true);
 
     const result = await signInWithGoogle();
 
     if (result?.error) {
       setError(result.error);
-      setLoading(false);
+      setGoogling(false);
       return;
     }
 
@@ -73,9 +74,9 @@ export default function LoginPage() {
 
       <Card className="w-full md:max-w-sm pt-6 bg-card">
         <CardHeader>
-          <CardTitle className="text-center">Login to your account</CardTitle>
+          <CardTitle className="text-center text-xl">Login </CardTitle>
           <CardDescription className="text-center">
-            Enter your email below to login to your AI Study Buddy
+            AI study Buddy, Your daily Buddy
           </CardDescription>
         </CardHeader>
 
@@ -138,9 +139,9 @@ export default function LoginPage() {
             variant="secondary"
             className="w-full"
             onClick={handleGoogleLogin}
-            disabled={loading}
+            disabled={googling}
           >
-            Continue with Google
+            {googling ? "Loading..." : " Continue with Google"}
           </Button>
 
           <Button

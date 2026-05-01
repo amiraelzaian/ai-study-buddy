@@ -9,6 +9,7 @@ export async function signUpWithEmail(
   email: string,
   password: string,
   fullName: string,
+  phone: string,
 ) {
   const { data, error } = await supabase.auth.signUp({ email, password });
 
@@ -19,6 +20,7 @@ export async function signUpWithEmail(
     id: data.user.id,
     email,
     full_name: fullName,
+    phone,
   });
 
   await supabase.from("streaks").insert({
