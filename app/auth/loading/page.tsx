@@ -3,13 +3,14 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/app/_lib/supabase";
+import PageLoading from "@/app/_components/PageLoading";
 
 export default function AuthLoading() {
   const router = useRouter();
 
   useEffect(() => {
     const run = async () => {
-      // 👇 1. خدي التوكن من URL
+      //take token from Url
       const hash = window.location.hash;
 
       if (!hash) {
@@ -26,18 +27,18 @@ export default function AuthLoading() {
         return;
       }
 
-      // 👇 2. خزني السيشن
       const { error } = await supabase.auth.setSession({
         access_token,
         refresh_token,
       });
+      // we await to make sure that session is set successfully
       await new Promise((res) => setTimeout(res, 500));
+
       if (error) {
         router.push("/login");
         return;
       }
-
-      // 👇 3. دلوقتي getSession هيشتغل
+      // we use the session that we set accuatly set
       const { data } = await supabase.auth.getSession();
       const user = data.session?.user;
 
@@ -46,7 +47,7 @@ export default function AuthLoading() {
         return;
       }
 
-      // 👇 4. create profile
+      //  create profile
       const { data: profile } = await supabase
         .from("profiles")
         .select("id")
@@ -62,9 +63,12 @@ export default function AuthLoading() {
         });
       }
 
-      // 👇 5. نظفي الرابط
+      // clean the URL
+      // Remove sensitive tokens from the URL (they come in the hash after OAuth)
+      // This prevents tokens from being stored in browser history or exposed
       window.history.replaceState({}, document.title, "/dashboard");
-
+      // Now navigate to the dashboard using Next.js router (client-side navigation)
+      // This updates the UI without a full page reload
       router.replace("/dashboard");
     };
 
@@ -72,8 +76,10 @@ export default function AuthLoading() {
   }, [router]);
 
   return (
-    <div className="h-screen flex items-center justify-center">
-      <p>Logging you in...</p>
+    <div className="h-screen flex items-center justify-center ">
+      <p className="w-36 h-36 mx-auto">
+        <PageLoading />
+      </p>
     </div>
   );
 }
