@@ -77,9 +77,9 @@ export default function AuthLoading() {
 
   return (
     <div className="h-screen flex items-center justify-center ">
-      <p className="w-36 h-36 mx-auto">
+      <div className="w-36 h-36 mx-auto">
         <PageLoading />
-      </p>
+      </div>
     </div>
   );
 }

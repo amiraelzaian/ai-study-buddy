@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/app/_lib/supabase";
 import { useRouter } from "next/navigation";
+import PageLoading from "../_components/PageLoading";
 
 export default function Dashboard() {
   const router = useRouter();
@@ -22,7 +23,7 @@ export default function Dashboard() {
     check();
   }, [router]);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <PageLoading />;
 
   return <div>Welcome 🎉</div>;
 }
