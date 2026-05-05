@@ -1,7 +1,7 @@
 // app/_hooks/useUser.ts
 "use client";
 import { useEffect, useState } from "react";
-import { supabase } from "@/app/_lib/supabase";
+import { supabase } from "@/app/_lib/supabase/client";
 import type { User } from "@supabase/supabase-js";
 import { getCurrentUser } from "../_lib/actions";
 

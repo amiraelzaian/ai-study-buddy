@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/app/_lib/supabase";
+import { supabase } from "@/app/_lib/supabase/client";
 import PageLoading from "@/app/_components/PageLoading";
 
 export default function AuthLoading() {

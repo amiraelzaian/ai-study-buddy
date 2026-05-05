@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { supabase } from "@/app/_lib/supabase";
+import { supabase } from "@/app/_lib/supabase/client";
 
 // =================== SETUP ===================
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);

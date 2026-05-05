@@ -1,8 +1,7 @@
-// app/_lib/actions.ts
 "use server";
 
-import { supabase } from "./supabase";
 import { redirect } from "next/navigation";
+import { createSupabaseServer } from "./supabase/server";
 
 // =================== SIGN UP ===================
 export async function signUpWithEmail(
@@ -11,6 +10,7 @@ export async function signUpWithEmail(
   fullName: string,
   phone: string,
 ) {
+  const supabase = await createSupabaseServer();
   const { data, error } = await supabase.auth.signUp({ email, password });
 
   if (error) return { error: error.message };
@@ -40,6 +40,7 @@ export async function signUpWithEmail(
 
 // =================== SIGN IN ===================
 export async function signInWithEmail(email: string, password: string) {
+  const supabase = await createSupabaseServer();
   const { error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) return { error: error.message };
@@ -49,6 +50,7 @@ export async function signInWithEmail(email: string, password: string) {
 
 // =================== GOOGLE ===================
 export async function signInWithGoogle() {
+  const supabase = await createSupabaseServer();
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
@@ -63,26 +65,32 @@ export async function signInWithGoogle() {
 
 // =================== SIGN OUT ===================
 export async function signOut() {
+  const supabase = await createSupabaseServer();
   await supabase.auth.signOut();
   redirect("/login");
 }
 
 // =================== GET USER ===================
 export async function getCurrentUser() {
+  const supabase = await createSupabaseServer();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   return user;
 }
+
 // ================== GET SESSION ==================
 export async function getCurrentSession() {
+  const supabase = await createSupabaseServer();
   const { data, error } = await supabase.auth.getSession();
   if (error)
     throw new Error("Session is not valid, Error from action get session");
   return data;
 }
+
 // =================== GET PROFILE ===================
 export async function getProfile(userId: string) {
+  const supabase = await createSupabaseServer();
   const { data } = await supabase
     .from("profiles")
     .select("*")
@@ -94,6 +102,7 @@ export async function getProfile(userId: string) {
 
 // =================== GET STREAK ===================
 export async function getStreak(userId: string) {
+  const supabase = await createSupabaseServer();
   const { data } = await supabase
     .from("streaks")
     .select("*")
@@ -105,6 +114,7 @@ export async function getStreak(userId: string) {
 
 // =================== UPDATE STREAK ===================
 export async function updateStreak(userId: string) {
+  const supabase = await createSupabaseServer();
   const streak = await getStreak(userId);
 
   if (!streak) return;
@@ -140,6 +150,7 @@ export async function saveStudySession(
   mode: string,
   score?: number,
 ) {
+  const supabase = await createSupabaseServer();
   const { error } = await supabase.from("study_sessions").insert({
     user_id: userId,
     topic,
@@ -157,6 +168,7 @@ export async function saveStudySession(
 
 // =================== GET STUDY SESSIONS ===================
 export async function getStudySessions(userId: string) {
+  const supabase = await createSupabaseServer();
   const { data } = await supabase
     .from("study_sessions")
     .select("*")
