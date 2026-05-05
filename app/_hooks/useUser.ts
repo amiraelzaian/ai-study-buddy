@@ -3,19 +3,20 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/app/_lib/supabase";
 import type { User } from "@supabase/supabase-js";
+import { getCurrentUser } from "../_lib/actions";
 
 export function useUser() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    // get current session
-    supabase.auth.getUser().then(({ data: { user } }) => {
+  useEffect(function () {
+    async function init() {
+      const user = await getCurrentUser();
       setUser(user);
       setLoading(false);
-    });
+    }
+    init();
 
-    // listen for auth changes (login/logout)
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {

@@ -4,7 +4,7 @@ import Logo from "./Logo";
 
 function Header() {
   const { user, loading } = useUser();
-  console.log(user, loading);
+  console.log(user, loading, "maira");
 
   return (
     <section className="w-full fixed top-0 left-0 bg-forground p-2 flex justify-between items-center">

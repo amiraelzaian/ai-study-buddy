@@ -74,7 +74,13 @@ export async function getCurrentUser() {
   } = await supabase.auth.getUser();
   return user;
 }
-
+// ================== GET SESSION ==================
+export async function getCurrentSession() {
+  const { data, error } = await supabase.auth.getSession();
+  if (error)
+    throw new Error("Session is not valid, Error from action get session");
+  return data;
+}
 // =================== GET PROFILE ===================
 export async function getProfile(userId: string) {
   const { data } = await supabase
