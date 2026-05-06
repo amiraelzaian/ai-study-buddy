@@ -3,7 +3,7 @@ import { Brain } from "lucide-react";
 
 function Logo() {
   return (
-    <div className="flex items-center gap-3 group cursor-pointer p-3">
+    <div className="flex items-center gap-3 group cursor-pointer p-2">
       <div
         className="relative flex items-center justify-center w-10 h-10 rounded-xl 
         bg-gradient-to-br  from-primary-500 to-primary-800 shadow-lg
