@@ -29,10 +29,12 @@ function ProgressCard({
         </span>
         <div className="flex flex-col">
           <h2 className="font-bold text-2xl">{number}</h2>
-          <p className="text-gray-600 text-sm">{topic}</p>
+          <p className="text-secondary-foreground text-sm">{topic}</p>
         </div>
       </div>
-      <section className="text-gray-600 text-sm">{children}</section>
+      <section className="text-secondary-foreground text-sm">
+        {children}
+      </section>
     </section>
   );
 }
