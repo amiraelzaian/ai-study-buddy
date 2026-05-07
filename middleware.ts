@@ -1,4 +1,3 @@
-// middleware.ts  ← in the ROOT of your project (next to app/)
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
@@ -26,7 +25,25 @@ export async function middleware(request: NextRequest) {
     },
   );
 
-  await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const pathname = request.nextUrl.pathname;
+
+  // ✅ never block the auth callback route
+  if (pathname.startsWith("/auth")) {
+    return supabaseResponse;
+  }
+
+  // redirect unauthenticated users away from protected routes
+  if (!user && pathname.startsWith("/dashboard")) {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+
+  // redirect authenticated users away from login/signup
+  if (user && (pathname === "/login" || pathname === "/signup")) {
+    return NextResponse.redirect(new URL("/dashboard", request.url));
+  }
 
   return supabaseResponse;
 }

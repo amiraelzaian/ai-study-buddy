@@ -9,6 +9,8 @@ import {
 } from "@/components/ui/avatar";
 import Theme from "./Theme";
 import { useScreenSize } from "@/hooks/useScreen";
+import { signOut } from "@/app/_lib/actions";
+import { LogOut } from "lucide-react";
 
 function Header() {
   const { user, loading } = useUser();
@@ -21,10 +23,7 @@ function Header() {
     >
       <Logo />
 
-      <div
-        className="flex gap-2 justify-center items-center
-        "
-      >
+      <div className="flex gap-2 justify-center items-center">
         <Theme />
         {!loading && user && (
           <>
@@ -39,11 +38,20 @@ function Header() {
               <AvatarBadge />
             </Avatar>
             {!isMobile && (
-              <span className=" text-forground">
+              <span className="text-forground">
                 {user.user_metadata.name.split(" ")[0] ||
                   user.user_metadata.full_name}
               </span>
             )}
+            <form action={signOut}>
+              <button
+                type="submit"
+                className="flex items-center gap-1 text-sm text-muted-foreground hover:text-destructive transition-colors"
+              >
+                <LogOut className="w-4 h-4" />
+                {!isMobile && <span>Logout</span>}
+              </button>
+            </form>
           </>
         )}
       </div>
