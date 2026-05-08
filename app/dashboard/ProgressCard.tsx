@@ -20,7 +20,7 @@ function ProgressCard({
   return (
     <section
       className="p-4 border hover:border-primary-500 mx-auto w-full md:w-1/3 bg-card rounded-md
-    flex flex-col gap-2 hover:-translate-y-1 transition-all duration-75 hover:shadow-md
+    flex flex-col gap-2  transition-all duration-75 hover:shadow-md
     "
     >
       <div className="flex gap-2 items-center">
