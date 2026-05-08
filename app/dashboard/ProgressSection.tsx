@@ -25,7 +25,7 @@ async function ProgressSection() {
   const uniqueSubjects = new Set(studySessions.map((s) => s.subject_id)).size;
 
   return (
-    <section className="flex flex-col pt-4">
+    <section className="flex flex-col pt-4 mx-4">
       <h4 className="p-4 font-semibold">Your Progress</h4>
       <section className="flex gap-5 flex-col md:flex-row px-4">
         <ProgressCard
