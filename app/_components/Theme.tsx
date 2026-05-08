@@ -9,7 +9,7 @@ function Theme() {
     <button
       onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
       className="rounded-full w-[34px] h-[34px] hover:scale-105
-      shadow-md flex justify-center items-center bg-gray-100"
+      shadow-md flex justify-center items-center bg-card"
       aria-label="Toggle theme"
       suppressHydrationWarning
     >
