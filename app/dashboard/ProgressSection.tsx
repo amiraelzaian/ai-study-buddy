@@ -51,7 +51,7 @@ async function ProgressSection() {
           iconBG="#b6eac4"
           iconColor="#05180a52"
           topic="Average Score"
-          number={avgScore}
+          number={avgScore + "%"}
         >
           Based on {sessionsWithScore.length} sessions
         </ProgressCard>
