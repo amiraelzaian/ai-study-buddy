@@ -9,16 +9,41 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
+type Session = {
+  day: string;
+  created_at: string;
+  score: number | null;
+};
 export default function WeeklyPerformanceChart({
-  data,
+  sessions,
 }: {
-  data: ChartData[];
+  sessions: Session[];
 }) {
+  // dots chart (line chart)
+  const days = ["Sat", "Sun", "Mon", "Tue", "Wed", "Thu", "Fri"];
+
+  const chartData = days.map((day) => {
+    const daySessions = sessions.filter((s) => {
+      const sessionDay = new Date(s.created_at).toLocaleDateString("en-us", {
+        weekday: "short",
+      });
+      return sessionDay === day;
+    });
+    const avg =
+      daySessions.length > 0
+        ? Math.round(
+            daySessions.reduce((sum, s) => sum + (s.score ?? 0), 0) /
+              daySessions.length,
+          )
+        : 0;
+    return { day, score: avg };
+  });
+
   return (
     <div className="bg-card rounded-xl p-4 mx-8">
       <h3 className="font-semibold text-lg mb-4">Weekly Performance</h3>
       <ResponsiveContainer width="100%" height={300}>
-        <AreaChart data={data}>
+        <AreaChart data={chartData}>
           <defs>
             <linearGradient id="scoreGradient" x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%" stopColor="#6c63ff" stopOpacity={0.3} />

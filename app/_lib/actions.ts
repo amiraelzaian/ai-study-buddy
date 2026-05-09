@@ -1,4 +1,5 @@
 "use server";
+import { supabase } from "./supabase/client";
 
 import { redirect } from "next/navigation";
 import { createSupabaseServer } from "./supabase/server";
@@ -186,4 +187,20 @@ export async function getStudySessions(userId: string) {
     .limit(10);
 
   return data || [];
+}
+// ================== GET SUBJECT ========================
+export async function getSubjectById(subject_Id: string) {
+  const supabase = await createSupabaseServer();
+  const { data, error } = await supabase
+    .from("subjects")
+    .select("*")
+    .eq("id", subject_Id)
+    .single();
+
+  if (error) {
+    console.error("Error fetching subject:", error);
+    return null;
+  }
+
+  return data;
 }
