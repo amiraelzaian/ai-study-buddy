@@ -9,7 +9,7 @@ export default async function Page() {
     <main className="flex flex-col">
       <WelcomeSection />
       <StudySessionChoice />
-      <ProgressSection />
+      <ProgressSection pathname="dashboard" />
       <ActivityTable />
       <Footer />
     </main>

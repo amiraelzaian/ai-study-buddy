@@ -3,7 +3,7 @@ import { ArrowUpRight, Flame, Target } from "lucide-react";
 import ProgressCard from "./ProgressCard";
 import { getStreak, getCurrentUser, getStudySessions } from "../_lib/actions";
 
-async function ProgressSection() {
+async function ProgressSection({ pathname }) {
   const user = await getCurrentUser();
   const streaks = await getStreak(user?.id);
   const studySessions = await getStudySessions(user?.id);
@@ -26,7 +26,9 @@ async function ProgressSection() {
 
   return (
     <section className="flex flex-col pt-4 mx-4">
-      <h4 className="p-4 font-semibold">Your Progress</h4>
+      <h4 className="p-4 font-semibold">
+        {pathname === "profile" ? "Statistics" : "Your Progress"}
+      </h4>
       <section className="flex gap-5 flex-col md:flex-row px-4">
         <ProgressCard
           Icon={Flame}

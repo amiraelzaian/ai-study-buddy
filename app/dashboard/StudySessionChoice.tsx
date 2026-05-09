@@ -2,7 +2,7 @@ import StudyChoiceCard from "./StudyChoicesCard";
 
 function StudySessionChoice() {
   return (
-    <section className="w-full px-4 flex flex-col md:flex-row gap-4">
+    <section className="w-full px-4 flex flex-col md:flex-row gap-4 mx-4">
       <StudyChoiceCard choice="new" topic="Start new topic!">
         Explore something new today
       </StudyChoiceCard>
