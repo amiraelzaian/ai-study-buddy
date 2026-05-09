@@ -1,10 +1,15 @@
+import { redirect } from "next/navigation";
 import { getCurrentUser, getStudySessions } from "../_lib/actions";
 import ProgressSection from "../dashboard/ProgressSection";
 import WeeklyPerformanceChart from "./LineChart";
 
 async function page() {
   const user = await getCurrentUser();
-  const studySessions = await getStudySessions(user?.id);
+  if (!user) {
+    redirect("/login");
+  }
+
+  const studySessions = (await getStudySessions(user?.id)) ?? [];
   console.log(studySessions);
 
   const days = ["Sat", "Sun", "Mon", "Tue", "Wed", "Thu", "Fri"];
@@ -31,7 +36,7 @@ async function page() {
       {/*Profile card one col */}
       <section className="cols-span-1"></section>
       {/*statistics and charts  two cols*/}
-      <section className="col-span-2 ">
+      <section className="col-span-2 flex flex-col gap-5">
         <ProgressSection pathname="profile" />
         <WeeklyPerformanceChart data={chartData} />
       </section>

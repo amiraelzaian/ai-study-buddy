@@ -15,7 +15,7 @@ export default function WeeklyPerformanceChart({
   data: ChartData[];
 }) {
   return (
-    <div className="bg-card rounded-xl p-6">
+    <div className="bg-card rounded-xl p-4 mx-8">
       <h3 className="font-semibold text-lg mb-4">Weekly Performance</h3>
       <ResponsiveContainer width="100%" height={300}>
         <AreaChart data={data}>

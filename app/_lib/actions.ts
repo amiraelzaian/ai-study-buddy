@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { createSupabaseServer } from "./supabase/server";
+import { cache } from "react";
 
 // =================== SIGN UP ===================
 export async function signUpWithEmail(
@@ -71,13 +72,21 @@ export async function signOut() {
 }
 
 // =================== GET USER ===================
-export async function getCurrentUser() {
+// export async function getCurrentUser() {
+//   const supabase = await createSupabaseServer();
+//   const {
+//     data: { user },
+//   } = await supabase.auth.getUser();
+//   return user;
+// }
+export const getCurrentUser = cache(async () => {
   const supabase = await createSupabaseServer();
+
   const {
     data: { user },
   } = await supabase.auth.getUser();
   return user;
-}
+});
 
 // ================== GET SESSION ==================
 export async function getCurrentSession() {
