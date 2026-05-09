@@ -1,9 +1,15 @@
 "use client";
 import { Sun, Moon } from "lucide-react";
 import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
 
 function Theme() {
-  const { theme, setTheme, resolvedTheme } = useTheme();
+  const { resolvedTheme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <button
@@ -11,9 +17,8 @@ function Theme() {
       className="rounded-full w-[34px] h-[34px] hover:scale-105
       shadow-md flex justify-center items-center bg-card"
       aria-label="Toggle theme"
-      suppressHydrationWarning
     >
-      {resolvedTheme === "dark" ? (
+      {!mounted ? null : resolvedTheme === "dark" ? (
         <Moon className="text-blue-500" />
       ) : (
         <Sun className="text-yellow-400" />
