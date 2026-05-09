@@ -1,4 +1,5 @@
 "use client";
+import { Black_And_White_Picture } from "next/font/google";
 import {
   BarChart,
   Bar,
@@ -9,17 +10,51 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-type ChartData = {
-  subject: string;
-  count: number;
+type TopicsBySubject = {
+  subject_id: string;
+  subjects: {
+    id: string;
+    name: string;
+  } | null;
 };
 
-export default function TopicsBySubject({ data }: { data: ChartData[] }) {
+export default function TopicsBySubjectChart({
+  topicsBySubject,
+}: {
+  topicsBySubject: TopicsBySubject[];
+}) {
+  const subjectCounts = topicsBySubject.reduce(
+    (acc, session) => {
+      const name = session.subjects?.name ?? "unknown";
+      acc[name] = (acc[name] ?? 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
+  console.log(subjectCounts);
+  // Sort by count descending
+  const sorted = Object.entries(subjectCounts).sort((a, b) => b[1] - a[1]);
+
+  // Top 5 + "Others"
+  const top5 = sorted.slice(0, 5);
+  const others = sorted.slice(5);
+
+  const chartData = top5.map(([subject, count]) => ({
+    subject: subject.split(" ")[0],
+    count,
+  }));
+  if (others.length > 0) {
+    const othersCount = others.reduce((sum, [, count]) => sum + count, 0);
+    chartData.push({ subject: "Others", count: othersCount });
+  }
+  console.log(others);
+  console.log(chartData);
+
   return (
     <div className="bg-card rounded-xl p-4 mx-8">
       <h3 className="font-semibold text-lg mb-4">Topics by Subject</h3>
       <ResponsiveContainer width="100%" height={300}>
-        <BarChart data={data}>
+        <BarChart data={chartData}>
           <defs>
             <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="#6c63ff" stopOpacity={1} />
@@ -38,6 +73,7 @@ export default function TopicsBySubject({ data }: { data: ChartData[] }) {
               borderRadius: "8px",
               border: "none",
               boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+              color: "blueviolet",
             }}
             formatter={(value) => [`Count: ${value}`]}
           />

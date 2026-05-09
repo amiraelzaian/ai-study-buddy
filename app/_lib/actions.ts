@@ -189,17 +189,24 @@ export async function getStudySessions(userId: string) {
   return data || [];
 }
 // ================== GET SUBJECT ========================
-export async function getSubjectById(subject_Id: string) {
+export async function getSubjectsByUser(userId: string) {
   const supabase = await createSupabaseServer();
   const { data, error } = await supabase
-    .from("subjects")
-    .select("*")
-    .eq("id", subject_Id)
-    .single();
+    .from("study_sessions")
+    .select(
+      `
+      subject_id,
+      subjects (
+        id,
+        name
+      )
+    `,
+    )
+    .eq("user_id", userId);
 
   if (error) {
-    console.error("Error fetching subject:", error);
-    return null;
+    console.error("Error fetching subjects:", error);
+    return [];
   }
 
   return data;
