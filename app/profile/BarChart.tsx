@@ -51,7 +51,11 @@ export default function TopicsBySubjectChart({
   console.log(chartData);
 
   return (
-    <div className="bg-card rounded-xl p-4 mx-8">
+    <div
+      className="bg-card rounded-xl p-4 mx-8 
+     shadow-md border border-gray-200
+     hover:border-primary-400 transition-all duration-75"
+    >
       <h3 className="font-semibold text-lg mb-4">Topics by Subject</h3>
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={chartData}>

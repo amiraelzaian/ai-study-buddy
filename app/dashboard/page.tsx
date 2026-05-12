@@ -6,7 +6,7 @@ import WelcomeSection from "./WelcomeSection";
 
 export default async function Page() {
   return (
-    <main className="flex flex-col">
+    <main className="flex flex-col overflow-x-hidden">
       <WelcomeSection />
       <StudySessionChoice />
       <ProgressSection pathname="dashboard" />

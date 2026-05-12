@@ -1,4 +1,4 @@
-import { LucideIcon } from "lucide-react";
+import { LucideIcon, Scale } from "lucide-react";
 
 interface ProgressCardProps {
   children: React.ReactNode;
@@ -20,8 +20,7 @@ function ProgressCard({
   return (
     <section
       className="p-4 border hover:border-primary-500 mx-auto w-full md:w-1/3 bg-card rounded-md
-    flex flex-col gap-2  transition-all duration-75 hover:shadow-md
-    "
+  flex flex-col gap-2 transition-all duration-75 hover:shadow-md hover:scale-x-105"
     >
       <div className="flex gap-2 items-center">
         <span className="rounded-md p-1" style={{ backgroundColor: iconBG }}>

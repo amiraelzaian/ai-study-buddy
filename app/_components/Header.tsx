@@ -25,7 +25,7 @@ function Header() {
   return (
     <section
       className="w-full fixed top-0 left-0 bg-card px-2 md:px-4 py-2
-  flex justify-between items-center shadow-sm"
+  flex justify-between items-center shadow-sm z-50 bg-opacity-50"
     >
       <div className="flex gap-5 items-center justify-center">
         {!isDshboard && (

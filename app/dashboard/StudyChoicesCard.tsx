@@ -13,7 +13,7 @@ export default function StudyChoiceCard({ choice, topic, children }: Card) {
   return (
     <section
       onClick={() => {}}
-      className={`w-full md:w-1/2 flex flex-col gap-2 px-4 py-10 
+      className={`w-full  flex flex-col  gap-2 px-4 py-10  mx-auto
         cursor-pointer rounded-lg border hover:shadow-lg transition-shadow
         ${isNew ? "bg-primary" : "bg-card"}`}
     >
