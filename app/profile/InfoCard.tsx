@@ -1,5 +1,6 @@
 import { Plus } from "lucide-react";
 import Image from "next/image";
+import EditProfileModal from "./EditProfileModal";
 
 type Profile = {
   profile: {
@@ -75,9 +76,10 @@ function InfoCard({ profile }: Profile) {
       </div>
 
       {/* Edit Button */}
-      <button className="w-full bg-primary text-white py-2 rounded-xl font-medium hover:bg-primary/90 transition-all duration-200">
+      {/* <button className="w-full bg-primary text-white py-2 rounded-xl font-medium hover:bg-primary/90 transition-all duration-200">
         Edit Profile
-      </button>
+      </button> */}
+      <EditProfileModal profile={profile} />
     </aside>
   );
 }
