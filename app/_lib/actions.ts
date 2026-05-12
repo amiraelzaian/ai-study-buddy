@@ -1,5 +1,4 @@
 "use server";
-import { supabase } from "./supabase/client";
 
 import { redirect } from "next/navigation";
 import { createSupabaseServer } from "./supabase/server";
@@ -18,20 +17,20 @@ export async function signUpWithEmail(
   if (error) return { error: error.message };
   if (!data.user) return { error: "Something went wrong" };
 
-  await supabase.from("profiles").insert({
+  await supabase.from("profiles").upsert({
     id: data.user.id,
     email,
     full_name: fullName,
     phone,
   });
 
-  await supabase.from("streaks").insert({
+  await supabase.from("streaks").upsert({
     user_id: data.user.id,
     current_streak: 0,
     longest_streak: 0,
   });
 
-  await supabase.from("ai_usage").insert({
+  await supabase.from("ai_usage").upsert({
     user_id: data.user.id,
     daily_count: 0,
     last_reset: new Date().toISOString().split("T")[0],
@@ -80,23 +79,35 @@ export async function signOut() {
 //   } = await supabase.auth.getUser();
 //   return user;
 // }
+// export const getCurrentUser = cache(async () => {
+//   const supabase = await createSupabaseServer();
+
+//   const {
+//     data: { user },
+//   } = await supabase.auth.getUser();
+//   return user;
+// });
 export const getCurrentUser = cache(async () => {
   const supabase = await createSupabaseServer();
 
   const {
     data: { user },
+    error,
   } = await supabase.auth.getUser();
+
+  if (error) return null;
+
   return user;
 });
 
 // ================== GET SESSION ==================
-export async function getCurrentSession() {
-  const supabase = await createSupabaseServer();
-  const { data, error } = await supabase.auth.getSession();
-  if (error)
-    throw new Error("Session is not valid, Error from action get session");
-  return data;
-}
+// export async function getCurrentSession() {
+//   const supabase = await createSupabaseServer();
+//   const { data, error } = await supabase.auth.getSession();
+//   if (error)
+//     throw new Error("Session is not valid, Error from action get session");
+//   return data;
+// }
 
 // =================== GET PROFILE ===================
 export async function getProfile(userId: string) {

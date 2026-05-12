@@ -7,7 +7,7 @@ export async function GET(request: NextRequest) {
   console.log("code:", code ? "EXISTS" : "MISSING");
 
   if (!code) {
-    console.log("❌ no code");
+    console.log("no code");
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
