@@ -26,7 +26,7 @@ async function page() {
   const profile = (await getProfile(userId)) ?? {};
   console.log(profile);
   return (
-    <section className="grid grid-cols-1 md:grid-cols-3 gap-4 mx-4">
+    <section className="grid grid-cols-1 md:grid-cols-3  mx-2">
       {/*Profile card one col */}
       <section className="cols-span-1">
         <InfoCard profile={profile} />

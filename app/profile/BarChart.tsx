@@ -52,7 +52,7 @@ export default function TopicsBySubjectChart({
 
   return (
     <div
-      className="bg-card rounded-xl p-4 mx-8 
+      className="bg-card rounded-xl p-2 mx-8 
      shadow-md border border-gray-200
      hover:border-primary-400 transition-all duration-75"
     >
