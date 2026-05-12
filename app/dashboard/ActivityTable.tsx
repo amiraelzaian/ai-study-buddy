@@ -1,6 +1,7 @@
 import { getCurrentUser, getStudySessions } from "../_lib/actions";
 import ActivityRow from "./ActivityRow";
 
+export const revalidate = 60 * 5;
 async function ActivityTable() {
   const user = await getCurrentUser();
   const studySessions = await getStudySessions(user?.id);

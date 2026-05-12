@@ -1,7 +1,8 @@
-// No "use client"
 import { ArrowUpRight, Flame, Target } from "lucide-react";
 import ProgressCard from "./ProgressCard";
 import { getStreak, getCurrentUser, getStudySessions } from "../_lib/actions";
+
+export const revalidate = 60 * 5;
 
 async function ProgressSection({ pathname }) {
   const user = await getCurrentUser();

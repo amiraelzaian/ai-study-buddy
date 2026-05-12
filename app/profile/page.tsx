@@ -7,7 +7,7 @@ import {
 import ProgressSection from "../dashboard/ProgressSection";
 import WeeklyPerformanceChart from "./LineChart";
 import TopicsBySubjectChart from "./BarChart";
-
+export const revalidate = 60 * 5;
 async function page() {
   const user = await getCurrentUser();
   if (!user) redirect("/login");
