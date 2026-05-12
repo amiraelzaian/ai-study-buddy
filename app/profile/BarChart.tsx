@@ -31,7 +31,7 @@ export default function TopicsBySubjectChart({
     },
     {} as Record<string, number>,
   );
-  console.log(subjectCounts);
+  // console.log(subjectCounts);
   // Sort by count descending
   const sorted = Object.entries(subjectCounts).sort((a, b) => b[1] - a[1]);
 
@@ -47,8 +47,8 @@ export default function TopicsBySubjectChart({
     const othersCount = others.reduce((sum, [, count]) => sum + count, 0);
     chartData.push({ subject: "Others", count: othersCount });
   }
-  console.log(others);
-  console.log(chartData);
+  // console.log(others);
+  // console.log(chartData);
 
   return (
     <div

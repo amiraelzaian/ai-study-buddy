@@ -1,12 +1,14 @@
 import { redirect } from "next/navigation";
 import {
   getCurrentUser,
+  getStreak,
   getStudySessions,
   getSubjectsByUser,
 } from "../_lib/actions";
 import ProgressSection from "../dashboard/ProgressSection";
 import WeeklyPerformanceChart from "./LineChart";
 import TopicsBySubjectChart from "./BarChart";
+import Achievements from "./Achievements";
 export const revalidate = 60 * 5;
 async function page() {
   const user = await getCurrentUser();
@@ -16,6 +18,9 @@ async function page() {
 
   const studySessions = (await getStudySessions(userId)) ?? [];
   const topicsBySubject = (await getSubjectsByUser(userId)) ?? [];
+  const streaks = (await getStreak(userId)) ?? [];
+  // console.log(streaks.longest_streak);
+  const longestStreak = streaks.longest_streak || 0;
 
   return (
     <section className="grid grid-cols-1 md:grid-cols-3 gap-4 mx-4">
@@ -26,6 +31,7 @@ async function page() {
         <ProgressSection pathname="profile" />
         <WeeklyPerformanceChart sessions={studySessions} />
         <TopicsBySubjectChart topicsBySubject={topicsBySubject} />
+        <Achievements sessions={studySessions} longestStreak={longestStreak} />
       </section>
     </section>
   );
