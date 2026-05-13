@@ -33,6 +33,7 @@ type FormData = {
 export default function EditProfileModal({ profile }: { profile: Profile }) {
   const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(false);
 
   // split full_name into first and last
   const [fName, lName] = profile.full_name?.split(" ") ?? ["", ""];
@@ -55,16 +56,17 @@ export default function EditProfileModal({ profile }: { profile: Profile }) {
     setError("");
     try {
       await updateProfile(profile.id, formData);
-      console.log(formData);
+      setOpen(false);
     } catch (e) {
-      setError("Failed to update profile");
+      console.error("Update error:", e); // ✅ see exact error
+      setError(e instanceof Error ? e.message : "Failed to update profile");
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <button className="w-full bg-primary text-white py-2 rounded-xl font-medium hover:bg-primary/90 transition-all duration-200">
           Edit Profile

@@ -3,6 +3,16 @@ import { NextResponse, type NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
+  const pathname = request.nextUrl.pathname;
+
+  // ✅ skip middleware for auth and login/signup pages
+  if (
+    pathname.startsWith("/auth") ||
+    pathname === "/login" ||
+    pathname === "/signup"
+  ) {
+    return supabaseResponse;
+  }
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -27,22 +37,27 @@ export async function middleware(request: NextRequest) {
 
   const {
     data: { user },
+    error,
   } = await supabase.auth.getUser();
-  const pathname = request.nextUrl.pathname;
 
-  // ✅ never block the auth callback route
-  if (pathname.startsWith("/auth")) {
-    return supabaseResponse;
+  // ✅ handle bad token — clear and redirect to login
+  if (error?.status === 400) {
+    await supabase.auth.signOut();
+    const response = NextResponse.redirect(new URL("/login", request.url));
+    request.cookies.getAll().forEach((cookie) => {
+      if (cookie.name.includes("sb-")) {
+        response.cookies.delete(cookie.name);
+      }
+    });
+    return response;
   }
 
-  // redirect unauthenticated users away from protected routes
-  if (!user && pathname.startsWith("/dashboard")) {
+  // protect dashboard and profile
+  if (
+    !user &&
+    (pathname.startsWith("/dashboard") || pathname.startsWith("/profile"))
+  ) {
     return NextResponse.redirect(new URL("/login", request.url));
-  }
-
-  // redirect authenticated users away from login/signup
-  if (user && (pathname === "/login" || pathname === "/signup")) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
   return supabaseResponse;

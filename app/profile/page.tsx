@@ -16,6 +16,7 @@ export const revalidate = 60 * 5;
 
 async function page() {
   const user = await getCurrentUser();
+  console.log("USER:", user);
   if (!user) redirect("/login");
 
   const userId = user.id;
