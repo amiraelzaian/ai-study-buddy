@@ -1,13 +1,21 @@
-import { getCurrentUser, getStudySessions } from "../_lib/actions";
 import ActivityRow from "./ActivityRow";
 
 export const revalidate = 60 * 5;
-async function ActivityTable() {
-  const user = await getCurrentUser();
-  const studySessions = await getStudySessions(user?.id);
+type StudySession = {
+  created_at: string;
+  id: string;
+  mode: string;
+  topic: string;
+  score: number | null;
+};
 
-  const recentSessions = studySessions
-    .toSorted(
+async function ActivityTable({
+  studySessions,
+}: {
+  studySessions: StudySession[]; // ✅ array not single object
+}) {
+  const recentSessions = [...studySessions]
+    .sort(
       (a, b) =>
         new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
     )

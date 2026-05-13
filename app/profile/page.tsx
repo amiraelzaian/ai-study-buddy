@@ -33,7 +33,11 @@ async function page() {
       </section>
       {/*statistics and charts  two cols*/}
       <section className="col-span-2 flex flex-col gap-5">
-        <ProgressSection pathname="profile" />
+        <ProgressSection
+          pathname="profile"
+          studySessions={studySessions}
+          streaks={streaks}
+        />
         <WeeklyPerformanceChart sessions={studySessions} />
         <TopicsBySubjectChart topicsBySubject={topicsBySubject} />
         <Achievements sessions={studySessions} longestStreak={longestStreak} />

@@ -26,6 +26,8 @@ type FormData = {
   lName: string;
   phoneNumber: string;
   bio: string;
+  avatar_url: string;
+  id: string;
 };
 
 export default function EditProfileModal({ profile }: { profile: Profile }) {

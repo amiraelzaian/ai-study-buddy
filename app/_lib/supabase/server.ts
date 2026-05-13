@@ -1,7 +1,8 @@
-import { createServerClient } from "@supabase/ssr";
+import { cache } from "react";
 import { cookies } from "next/headers";
+import { createServerClient } from "@supabase/ssr";
 
-export async function createSupabaseServer() {
+export const createSupabaseServer = cache(async () => {
   const cookieStore = await cookies();
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -9,16 +10,16 @@ export async function createSupabaseServer() {
     {
       cookies: {
         getAll: () => cookieStore.getAll(),
-        setAll: (cookiesToSet) => {
+        setAll: (
+          cookiesToSet: { name: string; value: string; options: any }[],
+        ) => {
           try {
             cookiesToSet.forEach(({ name, value, options }) =>
               cookieStore.set(name, value, options),
             );
-          } catch {
-            // called from a Server Component — middleware handles session refresh
-          }
+          } catch {}
         },
       },
     },
   );
-}
+});

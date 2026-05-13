@@ -72,45 +72,18 @@ export async function signOut() {
 }
 
 // =================== GET USER ===================
-// export async function getCurrentUser() {
-//   const supabase = await createSupabaseServer();
-//   const {
-//     data: { user },
-//   } = await supabase.auth.getUser();
-//   return user;
-// }
-// export const getCurrentUser = cache(async () => {
-//   const supabase = await createSupabaseServer();
-
-//   const {
-//     data: { user },
-//   } = await supabase.auth.getUser();
-//   return user;
-// });
 export const getCurrentUser = cache(async () => {
   const supabase = await createSupabaseServer();
-
   const {
     data: { user },
     error,
   } = await supabase.auth.getUser();
-
   if (error) return null;
-
   return user;
 });
 
-// ================== GET SESSION ==================
-// export async function getCurrentSession() {
-//   const supabase = await createSupabaseServer();
-//   const { data, error } = await supabase.auth.getSession();
-//   if (error)
-//     throw new Error("Session is not valid, Error from action get session");
-//   return data;
-// }
-
 // =================== GET PROFILE ===================
-export async function getProfile(userId: string) {
+export const getProfile = cache(async (userId: string) => {
   const supabase = await createSupabaseServer();
   const { data } = await supabase
     .from("profiles")
@@ -119,10 +92,10 @@ export async function getProfile(userId: string) {
     .maybeSingle();
 
   return data;
-}
+});
 
 // =================== GET STREAK ===================
-export async function getStreak(userId: string) {
+export const getStreak = cache(async (userId: string) => {
   const supabase = await createSupabaseServer();
   const { data } = await supabase
     .from("streaks")
@@ -131,10 +104,11 @@ export async function getStreak(userId: string) {
     .maybeSingle();
 
   return data;
-}
+});
 
 // =================== UPDATE STREAK ===================
 export async function updateStreak(userId: string) {
+  // ❌ don't cache — writes to DB
   const supabase = await createSupabaseServer();
   const streak = await getStreak(userId);
 
@@ -188,7 +162,7 @@ export async function saveStudySession(
 }
 
 // =================== GET STUDY SESSIONS ===================
-export async function getStudySessions(userId: string) {
+export const getStudySessions = cache(async (userId: string) => {
   const supabase = await createSupabaseServer();
   const { data } = await supabase
     .from("study_sessions")
@@ -198,9 +172,10 @@ export async function getStudySessions(userId: string) {
     .limit(10);
 
   return data || [];
-}
+});
+
 // ================== GET SUBJECT ========================
-export async function getSubjectsByUser(userId: string) {
+export const getSubjectsByUser = cache(async (userId: string) => {
   const supabase = await createSupabaseServer();
   const { data, error } = await supabase
     .from("study_sessions")
@@ -221,10 +196,9 @@ export async function getSubjectsByUser(userId: string) {
   }
 
   return data;
-}
+});
 
 // ================== UPDATE PROFILE ========================
-// actions.ts
 export async function updateProfile(
   userId: string,
   formData: {

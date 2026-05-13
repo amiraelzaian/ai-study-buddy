@@ -1,32 +1,43 @@
 import { ArrowUpRight, Flame, Target } from "lucide-react";
 import ProgressCard from "./ProgressCard";
-import { getStreak, getCurrentUser, getStudySessions } from "../_lib/actions";
 
 export const revalidate = 60 * 5;
 
-async function ProgressSection({ pathname }) {
-  const user = await getCurrentUser();
-  const streaks = (await getStreak(user?.id)) ?? [];
-  const studySessions = (await getStudySessions(user?.id)) ?? [];
+type Session = {
+  topic: string;
+  score: number | null;
+  subject_id: string;
+};
 
-  // unique topics
+type Streak = {
+  current_streak: number;
+  longest_streak: number;
+};
+
+async function ProgressSection({
+  pathname,
+  studySessions,
+  streaks,
+}: {
+  pathname: string;
+  studySessions: Session[];
+  streaks: Streak;
+}) {
   const uniqueTopics = new Set(studySessions.map((s) => s.topic)).size;
 
-  // average score (only sessions with a score)
   const sessionsWithScore = studySessions.filter((s) => s.score !== null);
   const avgScore =
     sessionsWithScore.length > 0
       ? Math.round(
-          sessionsWithScore.reduce((sum, s) => sum + s.score, 0) /
+          sessionsWithScore.reduce((sum, s) => sum + (s.score ?? 0), 0) /
             sessionsWithScore.length,
         )
       : 0;
 
-  // unique subjects
   const uniqueSubjects = new Set(studySessions.map((s) => s.subject_id)).size;
 
   return (
-    <section className="flex flex-col pt-4 mx-4 ">
+    <section className="flex flex-col pt-4 mx-4">
       <h4 className="p-4 font-semibold">
         {pathname === "profile" ? "Statistics" : "Your Progress"}
       </h4>
@@ -38,7 +49,7 @@ async function ProgressSection({ pathname }) {
           topic="Day Streak"
           number={streaks?.current_streak ?? 0}
         >
-          keep it up! You are on fire!
+          Keep it up! You are on fire!
         </ProgressCard>
         <ProgressCard
           Icon={Target}
@@ -54,7 +65,7 @@ async function ProgressSection({ pathname }) {
           iconBG="#b6eac4"
           iconColor="#05180a52"
           topic="Average Score"
-          number={avgScore + "%"}
+          number={`${avgScore}%`}
         >
           Based on {sessionsWithScore.length} sessions
         </ProgressCard>
