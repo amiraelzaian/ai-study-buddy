@@ -11,36 +11,56 @@ import WeeklyPerformanceChart from "./LineChart";
 import TopicsBySubjectChart from "./BarChart";
 import Achievements from "./Achievements";
 import InfoCard from "./InfoCard";
+
 export const revalidate = 60 * 5;
+
 async function page() {
   const user = await getCurrentUser();
   if (!user) redirect("/login");
 
-  const userId = user!.id;
+  const userId = user.id;
 
   const studySessions = (await getStudySessions(userId)) ?? [];
   const topicsBySubject = (await getSubjectsByUser(userId)) ?? [];
-  const streaks = (await getStreak(userId)) ?? [];
-  // console.log(streaks.longest_streak);
-  const longestStreak = streaks.longest_streak || 0;
-  const profile = (await getProfile(userId)) ?? {};
-  console.log(profile);
+  const streaks = await getStreak(userId);
+  const profile = await getProfile(userId);
+
+  const longestStreak = streaks?.longest_streak ?? 0;
+
+  // ✅ fallback if profile doesn't exist yet (e.g. new Google user)
+  const safeProfile = profile ?? {
+    id: userId,
+    full_name: user.user_metadata?.full_name ?? "",
+    email: user.email ?? "",
+    avatar_url: user.user_metadata?.avatar_url ?? null,
+    Bio: "",
+    phone: "",
+    created_at: user.created_at ?? "",
+  };
+
+  // ✅ fallback if streaks don't exist yet
+  const safeStreaks = streaks ?? {
+    current_streak: 0,
+    longest_streak: 0,
+  };
+
   return (
-    <section className="grid grid-cols-1 md:grid-cols-3  mx-2">
-      {/*Profile card one col */}
+    <section className="grid grid-cols-1 md:grid-cols-3 mx-2">
       <section className="cols-span-1">
-        <InfoCard profile={profile} />
+        <InfoCard profile={safeProfile} />
       </section>
-      {/*statistics and charts  two cols*/}
       <section className="col-span-2 flex flex-col gap-5">
         <ProgressSection
           pathname="profile"
-          studySessions={studySessions}
-          streaks={streaks}
+          studySessions={studySessions ?? []}
+          streaks={safeStreaks}
         />
-        <WeeklyPerformanceChart sessions={studySessions} />
-        <TopicsBySubjectChart topicsBySubject={topicsBySubject} />
-        <Achievements sessions={studySessions} longestStreak={longestStreak} />
+        <WeeklyPerformanceChart sessions={studySessions ?? []} />
+        <TopicsBySubjectChart topicsBySubject={topicsBySubject ?? []} />
+        <Achievements
+          sessions={studySessions ?? []}
+          longestStreak={longestStreak}
+        />
       </section>
     </section>
   );

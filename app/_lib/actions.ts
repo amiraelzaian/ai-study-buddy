@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { createSupabaseServer } from "./supabase/server";
 import { cache } from "react";
+import { revalidatePath } from "next/cache";
 
 // =================== SIGN UP ===================
 export async function signUpWithEmail(
@@ -208,15 +209,25 @@ export async function updateProfile(
     phoneNumber: string;
   },
 ) {
+  const supabase = await createSupabaseServer();
+
+  // ✅ verify session is valid first
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+  if (authError || !user) redirect("/login");
+
   const full_name = `${formData.fName} ${formData.lName}`;
   const Bio = formData.bio;
   const phone = formData.phoneNumber;
 
-  const supabase = await createSupabaseServer();
   const { error } = await supabase
     .from("profiles")
     .update({ full_name, Bio, phone })
     .eq("id", userId);
 
   if (error) throw new Error(error.message);
+
+  revalidatePath("/profile");
 }
