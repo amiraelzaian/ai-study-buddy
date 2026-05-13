@@ -231,3 +231,28 @@ export async function updateProfile(
 
   revalidatePath("/profile");
 }
+//=============== UPLOAD AVATAR ============
+export async function uploadAvatar(userId: string, file: File) {
+  const supabase = await createSupabaseServer();
+  const fileExt = file.name.split(".").pop();
+  const filePath = `${userId}/avatar.${fileExt}`;
+
+  const { error } = await supabase.storage
+    .from("avatars")
+    .upload(filePath, file, { upsert: true });
+
+  if (error) throw error;
+
+  const { data } = supabase.storage.from("avatars").getPublicUrl(filePath);
+
+  const publicUrl = `${data.publicUrl}?t=${Date.now()}`;
+
+  const { error: updateError } = await supabase
+    .from("profiles")
+    .update({ avatar_url: publicUrl })
+    .eq("id", userId);
+
+  if (updateError) throw updateError;
+
+  return publicUrl;
+}
