@@ -11,12 +11,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { updateProfile } from "../_lib/actions";
 
 type Profile = {
   full_name: string;
   phone: string;
   Bio: string;
   avatar_url: string;
+  id: string;
 };
 
 type FormData = {
@@ -46,12 +48,12 @@ export default function EditProfileModal({ profile }: { profile: Profile }) {
     },
   });
 
-  async function onSubmit(data: FormData) {
+  async function onSubmit(formData: FormData) {
     setLoading(true);
     setError("");
     try {
-      // TODO: call supabase update here
-      console.log(data);
+      await updateProfile(profile.id, formData);
+      console.log(formData);
     } catch (e) {
       setError("Failed to update profile");
     } finally {

@@ -222,3 +222,27 @@ export async function getSubjectsByUser(userId: string) {
 
   return data;
 }
+
+// ================== UPDATE PROFILE ========================
+// actions.ts
+export async function updateProfile(
+  userId: string,
+  formData: {
+    fName: string;
+    lName: string;
+    bio: string;
+    phoneNumber: string;
+  },
+) {
+  const full_name = `${formData.fName} ${formData.lName}`;
+  const Bio = formData.bio;
+  const phone = formData.phoneNumber;
+
+  const supabase = await createSupabaseServer();
+  const { error } = await supabase
+    .from("profiles")
+    .update({ full_name, Bio, phone })
+    .eq("id", userId);
+
+  if (error) throw new Error(error.message);
+}
