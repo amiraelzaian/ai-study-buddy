@@ -4,6 +4,17 @@
 @tailwind components;
 @tailwind utilities;
 
+.recharts-layer rect:focus,
+.recharts-layer path:focus,
+.recharts-rectangle:focus,
+.recharts-sector:focus {
+  outline: none !important;
+}
+
+* :focus {
+  outline: none !important;
+}
+
 @layer base {
   :root {
     --background: oklch(1 0 0);

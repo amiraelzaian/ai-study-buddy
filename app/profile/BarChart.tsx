@@ -1,5 +1,4 @@
 "use client";
-import { Black_And_White_Picture } from "next/font/google";
 import {
   BarChart,
   Bar,
@@ -54,11 +53,16 @@ export default function TopicsBySubjectChart({
     <div
       className="bg-card rounded-xl p-2 mx-8 
      shadow-md border border-gray-200
-     hover:border-primary-400 transition-all duration-75"
+     hover:border-primary-400 transition-all duration-75 "
+      tabIndex={-1}
     >
       <h3 className="font-semibold text-lg mb-4">Topics by Subject</h3>
-      <ResponsiveContainer width="100%" height={300}>
-        <BarChart data={chartData}>
+      <ResponsiveContainer
+        width="100%"
+        height={300}
+        style={{ outline: "none" }}
+      >
+        <BarChart data={chartData} style={{ outline: "none" }}>
           <defs>
             <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="#6c63ff" stopOpacity={1} />
@@ -73,6 +77,7 @@ export default function TopicsBySubjectChart({
           <XAxis dataKey="subject" axisLine={false} tickLine={false} />
           <YAxis axisLine={false} tickLine={false} />
           <Tooltip
+            cursor={false}
             contentStyle={{
               borderRadius: "8px",
               border: "none",
@@ -81,7 +86,12 @@ export default function TopicsBySubjectChart({
             }}
             formatter={(value) => [`Count: ${value}`]}
           />
-          <Bar dataKey="count" fill="url(#barGradient)" radius={[4, 4, 0, 0]} />
+          <Bar
+            dataKey="count"
+            fill="url(#barGradient)"
+            radius={[4, 4, 0, 0]}
+            style={{ outline: "none" }}
+          />
         </BarChart>
       </ResponsiveContainer>
     </div>

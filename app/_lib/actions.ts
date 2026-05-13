@@ -234,14 +234,26 @@ export async function updateProfile(
 //=============== UPLOAD AVATAR ============
 export async function uploadAvatar(userId: string, file: File) {
   const supabase = await createSupabaseServer();
+
   const fileExt = file.name.split(".").pop();
+
   const filePath = `${userId}/avatar.${fileExt}`;
+
+  // Convert file properly
+  const arrayBuffer = await file.arrayBuffer();
+  const buffer = new Uint8Array(arrayBuffer);
 
   const { error } = await supabase.storage
     .from("avatars")
-    .upload(filePath, file, { upsert: true });
+    .upload(filePath, buffer, {
+      contentType: file.type,
+      upsert: true,
+    });
 
-  if (error) throw error;
+  if (error) {
+    console.error(error);
+    throw error;
+  }
 
   const { data } = supabase.storage.from("avatars").getPublicUrl(filePath);
 
@@ -249,10 +261,14 @@ export async function uploadAvatar(userId: string, file: File) {
 
   const { error: updateError } = await supabase
     .from("profiles")
-    .update({ avatar_url: publicUrl })
+    .update({
+      avatar_url: publicUrl,
+    })
     .eq("id", userId);
 
   if (updateError) throw updateError;
+
+  revalidatePath("/profile");
 
   return publicUrl;
 }

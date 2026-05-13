@@ -7,28 +7,26 @@ import {
   getSubjectsByUser,
 } from "../_lib/actions";
 import ProgressSection from "../dashboard/ProgressSection";
-import WeeklyPerformanceChart from "./LineChart";
-import TopicsBySubjectChart from "./BarChart";
-import Achievements from "./Achievements";
 import InfoCard from "./InfoCard";
+import ProfileCharts from "./ProfileCharts";
 
 export const revalidate = 60 * 5;
 
 async function page() {
   const user = await getCurrentUser();
-  console.log("USER:", user);
   if (!user) redirect("/login");
 
   const userId = user.id;
 
   const studySessions = (await getStudySessions(userId)) ?? [];
+  // console.log("session", studySessions);
   const topicsBySubject = (await getSubjectsByUser(userId)) ?? [];
+  // console.log("session", topicsBySubject);
   const streaks = await getStreak(userId);
   const profile = await getProfile(userId);
 
   const longestStreak = streaks?.longest_streak ?? 0;
 
-  // ✅ fallback if profile doesn't exist yet (e.g. new Google user)
   const safeProfile = profile ?? {
     id: userId,
     full_name: user.user_metadata?.full_name ?? "",
@@ -39,7 +37,6 @@ async function page() {
     created_at: user.created_at ?? "",
   };
 
-  // ✅ fallback if streaks don't exist yet
   const safeStreaks = streaks ?? {
     current_streak: 0,
     longest_streak: 0,
@@ -56,10 +53,9 @@ async function page() {
           studySessions={studySessions ?? []}
           streaks={safeStreaks}
         />
-        <WeeklyPerformanceChart sessions={studySessions ?? []} />
-        <TopicsBySubjectChart topicsBySubject={topicsBySubject ?? []} />
-        <Achievements
-          sessions={studySessions ?? []}
+        <ProfileCharts
+          studySessions={studySessions ?? []}
+          topicsBySubject={topicsBySubject ?? []}
           longestStreak={longestStreak}
         />
       </section>
