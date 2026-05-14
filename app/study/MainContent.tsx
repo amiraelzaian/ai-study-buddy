@@ -6,12 +6,11 @@ import StudyArea from "./StudyArea";
 
 export type StudySession = {
   id: string;
-  user_id: string;
-  subject_id: string | null;
   topic: string;
-  mode: "flashcards" | "quiz" | string;
+  mode: string;
   score: number | null;
   created_at: string;
+  conversation_id: string;
 };
 
 type Props = {

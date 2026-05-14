@@ -33,8 +33,8 @@ export async function signUpWithEmail(
 
   await supabase.from("ai_usage").upsert({
     user_id: data.user.id,
-    daily_count: 0,
-    last_reset: new Date().toISOString().split("T")[0],
+    requests_count: 0,
+    date: new Date().toISOString().split("T")[0],
   });
 
   redirect("/dashboard");
@@ -141,14 +141,25 @@ export async function updateStreak(userId: string) {
 // =================== SAVE STUDY SESSION ===================
 export async function saveStudySession(
   userId: string,
+  conversationId: string,
   topic: string,
   subject: string,
   mode: string,
   score?: number,
 ) {
   const supabase = await createSupabaseServer();
+
+  const { data: existing } = await supabase
+    .from("study_sessions")
+    .select("id")
+    .eq("conversation_id", conversationId)
+    .maybeSingle();
+
+  if (existing) return { error: null };
+
   const { error } = await supabase.from("study_sessions").insert({
     user_id: userId,
+    conversation_id: conversationId,
     topic,
     subject_id: null,
     mode,
@@ -158,6 +169,8 @@ export async function saveStudySession(
   if (error) return { error: error.message };
 
   await updateStreak(userId);
+
+  revalidatePath("/study");
 
   return { error: null };
 }
@@ -271,4 +284,37 @@ export async function uploadAvatar(userId: string, file: File) {
   revalidatePath("/profile");
 
   return publicUrl;
+}
+//================================
+
+export async function getConversationWithMessages(conversationId: string) {
+  const supabase = await createSupabaseServer();
+
+  const { data, error } = await supabase
+    .from("conversations")
+    .select(
+      `
+      id,
+      subject,
+      mode,
+      title,
+      created_at,
+
+      messages (
+        id,
+        role,
+        content,
+        created_at
+      )
+    `,
+    )
+    .eq("id", conversationId)
+    .single();
+
+  if (error) {
+    console.error(error);
+    return null;
+  }
+
+  return data;
 }

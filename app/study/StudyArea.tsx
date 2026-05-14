@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { Lightbulb, HelpCircle, BookOpen, Sparkles, Menu } from "lucide-react";
-import ExplainView from "./ExplainView";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 type Mode = "explain" | "quiz" | "flashcard";
 
@@ -16,10 +16,7 @@ function StudyArea({ userId, onOpenSidebar }: Props) {
   const [topic, setTopic] = useState("");
   const [selectedMode, setSelectedMode] = useState<Mode>("explain");
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<string | null>(null);
-  const [activeTopic, setActiveTopic] = useState("");
-  const [activeMode, setActiveMode] = useState<Mode>("explain");
-  const [conversationId, setConversationId] = useState<string | null>(null);
+  const router = useRouter();
 
   const modes = [
     {
@@ -49,9 +46,6 @@ function StudyArea({ userId, onOpenSidebar }: Props) {
     }
 
     setLoading(true);
-    setResult(null);
-    setActiveTopic(topic.trim());
-    setActiveMode(selectedMode);
 
     try {
       const res = await fetch("/api/ai", {
@@ -65,30 +59,31 @@ function StudyArea({ userId, onOpenSidebar }: Props) {
           conversationId: null,
         }),
       });
+
+      if (res.status === 429) {
+        toast.error("Daily limit reached");
+        return;
+      }
+
       if (!res.ok) {
         const text = await res.text();
         console.error("Non-JSON response:", text);
         throw new Error("API request failed");
       }
-      if (res.status === 429) {
-        toast.error(`Daily limit reached`);
-        return;
-      }
+
       const data = await res.json();
-      console.log(data);
 
-      if (!res.ok || data.error) {
-        toast.error(data.error || "Something went wrong");
+      if (data.error) {
+        toast.error(data.error);
         return;
       }
 
-      setConversationId(data.conversationId ?? null);
-
-      if (selectedMode === "explain") {
-        setResult(data.answer);
-      } else {
-        setResult(JSON.stringify(data));
+      if (data.conversationId) {
+        router.push(`/study/${data.conversationId}`);
+        return;
       }
+
+      toast.error("Something went wrong");
     } catch {
       toast.error("Something went wrong. Please try again.");
     } finally {
@@ -96,24 +91,8 @@ function StudyArea({ userId, onOpenSidebar }: Props) {
     }
   }
 
-  if (result && activeMode === "explain") {
-    return (
-      <ExplainView
-        topic={activeTopic}
-        content={result}
-        userId={userId}
-        conversationId={conversationId}
-        onBack={() => {
-          setResult(null);
-          setConversationId(null);
-        }}
-      />
-    );
-  }
-
   return (
     <div className="flex flex-col items-center flex-1 px-6 py-12 relative overflow-y-auto h-full">
-      {" "}
       <button
         onClick={onOpenSidebar}
         className="md:hidden self-start mb-6 p-2 rounded-lg hover:bg-muted transition-colors absolute top-3 left-3"
@@ -121,6 +100,7 @@ function StudyArea({ userId, onOpenSidebar }: Props) {
       >
         <Menu className="w-5 h-5 text-muted-foreground" />
       </button>
+
       <div className="text-center mb-10 max-w-lg">
         <div className="inline-flex items-center gap-2 bg-purple-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 text-sm font-medium px-3 py-1.5 rounded-full mb-4">
           <Sparkles className="w-3.5 h-3.5" />
@@ -133,6 +113,7 @@ function StudyArea({ userId, onOpenSidebar }: Props) {
           Enter any topic and let AI help you master it
         </p>
       </div>
+
       <div className="w-full max-w-xl bg-card border border-border rounded-2xl p-6 shadow-sm space-y-6">
         <div>
           <label className="block text-sm font-medium text-foreground mb-2">
@@ -175,7 +156,7 @@ function StudyArea({ userId, onOpenSidebar }: Props) {
                     className={`w-5 h-5 ${isActive ? "text-white" : "text-primary-500"}`}
                   />
                   <span
-                    className={`text-sm font-semibold leading-tight ${isActive ? "text-secondary" : "text-secondary-forground"}`}
+                    className={`text-sm font-semibold leading-tight ${isActive ? "text-secondary" : "text-secondary-foreground"}`}
                   >
                     {m.label}
                   </span>
@@ -211,6 +192,7 @@ function StudyArea({ userId, onOpenSidebar }: Props) {
           )}
         </button>
       </div>
+
       <p className="text-xs text-muted-foreground mt-6">
         Press{" "}
         <kbd className="px-1.5 py-0.5 rounded bg-muted text-xs font-mono">

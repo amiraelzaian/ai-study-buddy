@@ -2,6 +2,7 @@
 
 import { X, BookOpen, HelpCircle, Clock } from "lucide-react";
 import type { StudySession } from "./MainContent";
+import { useRouter } from "next/navigation";
 
 type Props = {
   sessions: StudySession[];
@@ -34,6 +35,7 @@ function timeAgo(dateStr: string) {
 }
 
 function SessionsSidebar({ sessions, onClose }: Props) {
+  const router = useRouter();
   return (
     <div className="flex flex-col h-full overflow-hidden">
       <div className="flex items-center justify-between px-4 py-4 border-b border-border flex-shrink-0">
@@ -62,6 +64,7 @@ function SessionsSidebar({ sessions, onClose }: Props) {
         ) : (
           sessions.map((s) => (
             <div
+              onClick={() => router.push(`/study/${s.conversation_id}`)}
               key={s.id}
               className="flex items-start gap-3 p-3 rounded-xl bg-background
                          border border-border hover:border-purple-300
