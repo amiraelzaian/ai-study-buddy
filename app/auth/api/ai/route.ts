@@ -1,45 +1,49 @@
-// app/api/ai/route.ts
-
 import { NextResponse } from "next/server";
-import OpenAI from "openai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { supabase } from "@/app/_lib/supabase/client";
 
 // =================== SETUP ===================
-const cerebras = new OpenAI({
-  apiKey: process.env.CEREBRAS_API_KEY,
-  baseURL: "https://api.cerebras.ai/v1",
-});
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
 const DAILY_LIMIT = 20;
 
-async function generateAIResponse(
+// Fallback models
+const MODELS = [
+  "gemini-2.0-flash",
+  "gemini-2.0-flash-lite",
+  "gemini-1.5-flash-8b",
+];
+
+async function generateWithFallback(prompt: string) {
+  for (const modelName of MODELS) {
+    try {
+      const model = genAI.getGenerativeModel({ model: modelName });
+      const result = await model.generateContent(prompt);
+      return result.response.text();
+    } catch (e: any) {
+      console.warn(`Model ${modelName} failed:`, e.message);
+      continue;
+    }
+  }
+  throw new Error("All models failed");
+}
+
+async function chatWithFallback(
   history: { role: string; parts: { text: string }[] }[],
   prompt: string,
 ) {
-  const messages = history.map((m) => ({
-    role: m.role === "model" ? "assistant" : "user",
-    content: m.parts[0].text,
-  }));
-
-  messages.push({
-    role: "user",
-    content: prompt,
-  });
-
-  const completion = await cerebras.chat.completions.create({
-    model: "llama-3.1-8b",
-    messages: [
-      {
-        role: "system",
-        content:
-          "You are a helpful AI study assistant that explains topics clearly and accurately.",
-      },
-      ...messages,
-    ],
-    temperature: 0.7,
-  });
-
-  return completion.choices[0].message.content || "";
+  for (const modelName of MODELS) {
+    try {
+      const model = genAI.getGenerativeModel({ model: modelName });
+      const chat = model.startChat({ history });
+      const result = await chat.sendMessage(prompt);
+      return result.response.text();
+    } catch (e: any) {
+      console.warn(`Model ${modelName} failed:`, e.message);
+      continue;
+    }
+  }
+  throw new Error("All models failed");
 }
 
 // =================== API ROUTE ===================
@@ -57,7 +61,7 @@ export async function POST(request: Request) {
 
     const today = new Date().toISOString().split("T")[0];
 
-    // =================== CHECK LIMIT ===================
+    // =================== 1. CHECK LIMIT ===================
     const { data: usage } = await supabase
       .from("ai_usage")
       .select("*")
@@ -70,30 +74,23 @@ export async function POST(request: Request) {
           .from("ai_usage")
           .update({ daily_count: 0, last_reset: today })
           .eq("user_id", userId);
-
         usage.daily_count = 0;
       }
 
       if (usage.daily_count >= DAILY_LIMIT) {
         return NextResponse.json(
-          {
-            error: "Daily limit reached",
-            limit: DAILY_LIMIT,
-          },
+          { error: "Daily limit reached", limit: DAILY_LIMIT },
           { status: 429 },
         );
       }
     } else {
-      await supabase.from("ai_usage").insert({
-        user_id: userId,
-        daily_count: 0,
-        last_reset: today,
-      });
+      await supabase
+        .from("ai_usage")
+        .insert({ user_id: userId, daily_count: 0, last_reset: today });
     }
 
-    // =================== HISTORY ===================
+    // =================== 2. HISTORY ===================
     let history: { role: string; parts: { text: string }[] }[] = [];
-
     let currentConversationId = conversationId;
 
     if (conversationId) {
@@ -111,38 +108,26 @@ export async function POST(request: Request) {
     } else {
       const { data: newConversation } = await supabase
         .from("conversations")
-        .insert({
-          user_id: userId,
-          subject,
-          mode,
-        })
+        .insert({ user_id: userId, subject, mode })
         .select()
         .maybeSingle();
 
       currentConversationId = newConversation?.id;
     }
 
-    // =================== PROMPTS ===================
+    // =================== 3. PROMPTS ===================
     const prompts: Record<string, string> = {
       explain: `
 You are a helpful study assistant.
 Subject: ${subject || "General"}
-
 Explain clearly with examples:
-
 ${question}
       `,
-
       quiz: `
 You are a quiz generator.
-
 Subject: ${subject || "General"}
 Topic: ${question}
-
-Generate 10 MCQ questions in this exact JSON format only.
-No markdown.
-No extra text.
-
+Generate 10 MCQ questions in this exact JSON format only, no extra text:
 {
   "questions": [
     {
@@ -154,17 +139,11 @@ No extra text.
   ]
 }
       `,
-
       flashcard: `
 You are a flashcard generator.
-
 Subject: ${subject || "General"}
 Topic: ${question}
-
-Generate 5 flashcards in this exact JSON format only.
-No markdown.
-No extra text.
-
+Generate 5 flashcards in this exact JSON format only, no extra text:
 {
   "flashcards": [
     {
@@ -178,10 +157,16 @@ No extra text.
 
     const prompt = prompts[mode] || prompts.explain;
 
-    // =================== AI CALL ===================
-    const answer = await generateAIResponse(history, prompt);
+    // =================== 4. GEMINI CALL ===================
+    let answer = "";
 
-    // =================== SAVE MESSAGES ===================
+    if (history.length > 0) {
+      answer = await chatWithFallback(history, prompt);
+    } else {
+      answer = await generateWithFallback(prompt);
+    }
+
+    // =================== 5. SAVE MESSAGES ===================
     await supabase.from("messages").insert([
       {
         conversation_id: currentConversationId,
@@ -195,21 +180,17 @@ No extra text.
       },
     ]);
 
-    // =================== UPDATE USAGE ===================
+    // =================== 6. UPDATE USAGE ===================
     await supabase
       .from("ai_usage")
-      .update({
-        daily_count: (usage?.daily_count || 0) + 1,
-      })
+      .update({ daily_count: (usage?.daily_count || 0) + 1 })
       .eq("user_id", userId);
 
-    // =================== RESPONSE ===================
+    // =================== 7. RESPONSE ===================
     if (mode === "quiz" || mode === "flashcard") {
       try {
         const clean = answer.replace(/```json|```/g, "").trim();
-
         const parsed = JSON.parse(clean);
-
         return NextResponse.json({
           ...parsed,
           mode,
@@ -229,11 +210,8 @@ No extra text.
     });
   } catch (error) {
     console.error("AI Error:", error);
-
     return NextResponse.json(
-      {
-        error: "Something went wrong",
-      },
+      { error: "Something went wrong" },
       { status: 500 },
     );
   }
