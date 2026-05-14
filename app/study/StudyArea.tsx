@@ -70,13 +70,12 @@ function StudyArea({ userId, onOpenSidebar }: Props) {
         console.error("Non-JSON response:", text);
         throw new Error("API request failed");
       }
-      const data = await res.json();
-      console.log(data);
-
       if (res.status === 429) {
-        toast.error(`Daily limit reached (${data.limit} requests/day)`);
+        toast.error(`Daily limit reached`);
         return;
       }
+      const data = await res.json();
+      console.log(data);
 
       if (!res.ok || data.error) {
         toast.error(data.error || "Something went wrong");
@@ -113,7 +112,8 @@ function StudyArea({ userId, onOpenSidebar }: Props) {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center flex-1 px-6 py-6 relative">
+    <div className="flex flex-col items-center flex-1 px-6 py-12 relative overflow-y-auto h-full">
+      {" "}
       <button
         onClick={onOpenSidebar}
         className="md:hidden self-start mb-6 p-2 rounded-lg hover:bg-muted transition-colors absolute top-3 left-3"
@@ -121,7 +121,6 @@ function StudyArea({ userId, onOpenSidebar }: Props) {
       >
         <Menu className="w-5 h-5 text-muted-foreground" />
       </button>
-
       <div className="text-center mb-10 max-w-lg">
         <div className="inline-flex items-center gap-2 bg-purple-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 text-sm font-medium px-3 py-1.5 rounded-full mb-4">
           <Sparkles className="w-3.5 h-3.5" />
@@ -134,7 +133,6 @@ function StudyArea({ userId, onOpenSidebar }: Props) {
           Enter any topic and let AI help you master it
         </p>
       </div>
-
       <div className="w-full max-w-xl bg-card border border-border rounded-2xl p-6 shadow-sm space-y-6">
         <div>
           <label className="block text-sm font-medium text-foreground mb-2">
@@ -213,7 +211,6 @@ function StudyArea({ userId, onOpenSidebar }: Props) {
           )}
         </button>
       </div>
-
       <p className="text-xs text-muted-foreground mt-6">
         Press{" "}
         <kbd className="px-1.5 py-0.5 rounded bg-muted text-xs font-mono">

@@ -35,9 +35,8 @@ function timeAgo(dateStr: string) {
 
 function SessionsSidebar({ sessions, onClose }: Props) {
   return (
-    <div className="flex flex-col h-full">
-      {/* Header */}
-      <div className="flex items-center justify-between px-4 py-4 border-b border-border">
+    <div className="flex flex-col h-full overflow-hidden">
+      <div className="flex items-center justify-between px-4 py-4 border-b border-border flex-shrink-0">
         <h2 className="font-semibold text-base text-foreground">
           Recent Sessions
         </h2>

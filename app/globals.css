@@ -14,7 +14,10 @@
 * :focus {
   outline: none !important;
 }
-
+html,
+body {
+  height: 100%;
+}
 @layer base {
   :root {
     --background: oklch(1 0 0);

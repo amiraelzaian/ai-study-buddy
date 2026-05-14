@@ -19,7 +19,7 @@ type Props = {
   onBack: () => void;
 };
 
-// Split Gemini plain text response into visual sections
+// Split AI plain text response into visual sections
 function parseSections(raw: string) {
   const lines = raw
     .split("\n")
