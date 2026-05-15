@@ -334,3 +334,28 @@ export async function getTheLastConversationId(userId: string) {
   if (error) throw new Error("Couldn't get the last conversation");
   return data?.id ?? null;
 }
+//============== Delete session/conversation =============
+export async function deleteConversationFromHistory(conversationId: string) {
+  const supabase = await createSupabaseServer();
+
+  const { error } = await supabase
+    .from("conversations")
+    .delete()
+    .eq("id", conversationId);
+
+  if (error) throw new Error("Failed to delete conversation");
+  revalidatePath(`/study`);
+}
+
+//============== Delete history =========================
+export async function deleteAllHistory(userId: string) {
+  const supabase = await createSupabaseServer();
+
+  const { error } = await supabase
+    .from("conversations")
+    .delete()
+    .eq("user_id", userId);
+
+  if (error) throw new Error("Failed to delete all history");
+  revalidatePath(`/study`);
+}

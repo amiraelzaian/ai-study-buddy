@@ -145,6 +145,7 @@ export default function ExplainView({
       const res = await fetch("/api/ai", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({
           question,
           subject: topic,
@@ -265,7 +266,7 @@ export default function ExplainView({
         })}
 
         {/* CTA */}
-        <div className="bg-gradient-to-br from-purple-600 to-purple-800 rounded-2xl p-6 text-white">
+        {/* <div className="bg-gradient-to-br from-purple-600 to-purple-800 rounded-2xl p-6 text-white">
           <h2 className="text-lg font-semibold mb-1">
             Ready to test your knowledge?
           </h2>
@@ -273,6 +274,7 @@ export default function ExplainView({
             Take a quiz or review flashcards to reinforce what you&apos;ve
             learned.
           </p>
+
           <div className="flex gap-3 flex-wrap">
             <button
               onClick={() => router.push("/study")}
@@ -289,7 +291,7 @@ export default function ExplainView({
               View Flashcards
             </button>
           </div>
-        </div>
+        </div> */}
 
         {/* Follow-up chat messages */}
         {chatMessages

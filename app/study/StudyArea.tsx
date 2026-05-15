@@ -51,6 +51,7 @@ function StudyArea({ userId, onOpenSidebar }: Props) {
       const res = await fetch("/api/ai", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({
           question: topic.trim(),
           subject: topic.trim(),

@@ -111,7 +111,7 @@ export async function POST(request: Request) {
         .insert({ user_id: userId, subject, mode })
         .select()
         .maybeSingle();
-
+      console.log("convError:", JSON.stringify(convError, null, 2));
       if (convError || !newConversation) {
         console.error("Failed to create conversation:", convError);
         return NextResponse.json(
