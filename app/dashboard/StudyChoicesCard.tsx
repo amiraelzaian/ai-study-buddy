@@ -1,18 +1,32 @@
 "use client";
 import { BookOpen, Zap } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface Card {
   choice: string;
   topic: string;
+  conversationId: string;
   children: React.ReactNode;
 }
 
-export default function StudyChoiceCard({ choice, topic, children }: Card) {
+export default function StudyChoiceCard({
+  choice,
+  topic,
+  children,
+  conversationId,
+}: Card) {
   const isNew = choice === "new";
+  const router = useRouter();
 
   return (
     <section
-      onClick={() => {}}
+      onClick={() => {
+        if (isNew) {
+          router.push(`/study`);
+        } else {
+          router.push(`/study/${conversationId}`);
+        }
+      }}
       className={`w-full  flex flex-col  gap-2 px-4 py-10  mx-auto
         cursor-pointer rounded-lg border hover:shadow-lg transition-shadow
         ${isNew ? "bg-primary" : "bg-card"}`}

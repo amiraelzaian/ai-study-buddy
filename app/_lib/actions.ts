@@ -318,3 +318,19 @@ export async function getConversationWithMessages(conversationId: string) {
 
   return data;
 }
+
+//============== get last conversatioin id===========
+export async function getTheLastConversationId(userId: string) {
+  const supabase = await createSupabaseServer();
+
+  const { data, error } = await supabase
+    .from("conversations")
+    .select("id")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (error) throw new Error("Couldn't get the last conversation");
+  return data?.id ?? null;
+}
