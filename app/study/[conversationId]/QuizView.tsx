@@ -44,12 +44,15 @@ export default function QuizView({
   );
 
   useEffect(() => {
-    if (showResult && !saved) {
-      setSaved(true);
-      saveStudySession(userId, conversationId, topic, "", "quiz", score).then(
-        () => router.refresh(),
-      );
+    async function save() {
+      if (showResult && !saved) {
+        setSaved(true);
+        saveStudySession(userId, conversationId, topic, "", "quiz", score).then(
+          () => router.refresh(),
+        );
+      }
     }
+    save();
   }, [showResult, saved, userId, conversationId, topic, score, router]);
 
   function handleSelect(i: number) {

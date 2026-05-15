@@ -36,17 +36,20 @@ export default function FlashcardView({
   const progress = Math.round((known.size / flashcards.length) * 100);
 
   useEffect(() => {
-    if (!finished || saved) return;
+    async function save() {
+      if (!finished || saved) return;
 
-    setSaved(true);
-    saveStudySession(
-      userId,
-      conversationId,
-      topic,
-      "",
-      "flashcard",
-      progress,
-    ).then(() => router.refresh());
+      setSaved(true);
+      saveStudySession(
+        userId,
+        conversationId,
+        topic,
+        "",
+        "flashcard",
+        progress,
+      ).then(() => router.refresh());
+    }
+    save();
   }, [finished]); // eslint-disable-line react-hooks/exhaustive-deps
 
   function handleNext() {

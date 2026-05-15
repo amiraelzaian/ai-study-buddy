@@ -129,10 +129,13 @@ export async function POST(request: Request) {
 You are a helpful study assistant.
 Subject: ${subject || "General"}
 
-Explain clearly with examples:
+Explain the following topic using markdown.
+Use ## for main section headings.
+Use **bold** for key terms.
+Include examples where relevant.
 
 ${question}
-      `,
+`,
       quiz: `
 You are a quiz generator.
 

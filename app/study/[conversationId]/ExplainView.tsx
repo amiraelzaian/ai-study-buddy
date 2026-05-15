@@ -104,9 +104,8 @@ export default function ExplainView({
 }: Props) {
   const sections = parseSections(content);
   const router = useRouter();
-  const [chatMessages, setChatMessages] = useState(
-    initialMessages.filter((m) => m.role !== "model" || m.content !== content),
-  );
+  const [chatMessages, setChatMessages] = useState<Message[]>([]);
+
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
