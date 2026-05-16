@@ -35,14 +35,9 @@ function scoreColor(score: number | null) {
 function timeAgo(dateStr: string) {
   const dbTime = new Date(dateStr).getTime();
   const nowTime = Date.now();
-  const diff = nowTime - dbTime;
+  let diff = nowTime - dbTime;
 
-  console.log({
-    dateStr,
-    dbTime: new Date(dbTime).toISOString(),
-    nowTime: new Date(nowTime).toISOString(),
-    diffMinutes: Math.floor(diff / 60000),
-  });
+  diff -= 60 * 60 * 1000;
 
   if (diff < 0) return "just now";
 
@@ -51,7 +46,7 @@ function timeAgo(dateStr: string) {
   const mins = Math.floor(diff / 60000);
 
   if (days > 0) return `${days}d ago`;
-  if (hours >= 2) return `${hours}h ago`;
+  if (hours >= 1) return `${hours}h ago`;
   if (mins > 0) return `${mins}m ago`;
   return "just now";
 }

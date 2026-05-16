@@ -10,7 +10,7 @@ import FlashcardView from "./FlashcardView";
 type Props = {
   params: Promise<{ conversationId: string }>;
 };
-
+export const revalidate = 60;
 export default async function ConversationPage({ params }: Props) {
   const { conversationId } = await params;
 
