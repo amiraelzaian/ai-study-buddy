@@ -24,20 +24,22 @@ export function FlashcardCard({
 }: Props) {
   return (
     <div className="flex flex-col gap-6">
-      <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide text-center">
+      <p className="text-xs text-muted-foreground  font-medium uppercase tracking-wide text-center">
         {topic} — {flipped ? "Answer" : "Question"}
       </p>
 
       <div
         onClick={onFlip}
-        className="cursor-pointer select-none min-h-52 rounded-2xl border-2 border-border bg-card
+        className="cursor-pointer select-none min-h-52 rounded-2xl border-2 border-border bg-card shadow-lg
                    flex items-center justify-center p-8 text-center
-                   hover:border-purple-300 dark:hover:border-purple-700 transition-all
-                   active:scale-[0.98]"
+                   hover:border-primary-300 dark:hover:border-primary-700 transition-all
+                   active:scale-[0.95]"
       >
         <p
           className={`text-lg font-medium leading-relaxed ${
-            flipped ? "text-purple-600 dark:text-purple-400" : "text-foreground"
+            flipped
+              ? "text-primary-600 dark:text-primary-400"
+              : "text-foreground"
           }`}
         >
           {flipped ? card.back : card.front}

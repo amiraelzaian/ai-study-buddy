@@ -29,7 +29,10 @@ function Header() {
     >
       <div className="flex gap-5 items-center justify-center">
         {!isDshboard && (
-          <button onClick={() => router.back()} className="text-primary-500">
+          <button
+            onClick={() => router.push(`/dashboard`)}
+            className="text-primary-500"
+          >
             <ArrowLeft />
           </button>
         )}
