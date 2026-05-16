@@ -1,5 +1,5 @@
 "use client";
-import { BookOpen, HelpCircle } from "lucide-react";
+import { Book, BookOpen, HelpCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { useLongPress } from "../_hooks/useLongPress";
@@ -14,14 +14,15 @@ export type StudySession = {
   score: number | null;
   created_at: string;
   conversation_id: string;
+  conversations: { created_at: string };
 };
 
 function modeIcon(mode: string) {
   if (mode === "quiz")
-    return <HelpCircle className="w-4 h-4 text-purple-500" />;
+    return <HelpCircle className="w-4 h-4 text-orange-500" />;
   if (mode === "flashcards")
     return <BookOpen className="w-4 h-4 text-emerald-500" />;
-  return <BookOpen className="w-4 h-4 text-muted-foreground" />;
+  return <Book className="w-4 h-4 text-primary-500" />;
 }
 
 function scoreColor(score: number | null) {
@@ -32,18 +33,31 @@ function scoreColor(score: number | null) {
 }
 
 function timeAgo(dateStr: string) {
-  const diff = Date.now() - new Date(dateStr).getTime();
+  const dbTime = new Date(dateStr).getTime();
+  const nowTime = Date.now();
+  const diff = nowTime - dbTime;
+
+  console.log({
+    dateStr,
+    dbTime: new Date(dbTime).toISOString(),
+    nowTime: new Date(nowTime).toISOString(),
+    diffMinutes: Math.floor(diff / 60000),
+  });
+
+  if (diff < 0) return "just now";
+
   const days = Math.floor(diff / 86400000);
   const hours = Math.floor(diff / 3600000);
   const mins = Math.floor(diff / 60000);
 
   if (days > 0) return `${days}d ago`;
-  if (hours > 0) return `${hours}h ago`;
+  if (hours >= 2) return `${hours}h ago`;
   if (mins > 0) return `${mins}m ago`;
   return "just now";
 }
 
 function HistoryItem({ session }: { session: StudySession }) {
+  console.log(session);
   const router = useRouter();
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
@@ -88,12 +102,12 @@ function HistoryItem({ session }: { session: StudySession }) {
         onDoubleClick={handleDoubleClick}
         {...longPress}
         className="flex items-start gap-3 p-3 rounded-xl bg-background
-                 border border-border hover:border-purple-300
-                 dark:hover:border-purple-700 transition-colors cursor-pointer group"
+                 border border-border hover:border-primary-300
+                 dark:hover:border-primary-700 transition-colors cursor-pointer group"
       >
         <div className="mt-0.5">{modeIcon(session.mode)}</div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-foreground truncate group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
+          <p className="text-sm font-medium text-foreground truncate group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
             {session.topic}
           </p>
           <p className="text-xs text-muted-foreground capitalize mt-0.5">
@@ -109,7 +123,7 @@ function HistoryItem({ session }: { session: StudySession }) {
             </span>
           )}
           <span className="text-xs text-muted-foreground/60">
-            {timeAgo(session.created_at)}
+            {timeAgo(session.conversations.created_at)}
           </span>
         </div>
       </div>

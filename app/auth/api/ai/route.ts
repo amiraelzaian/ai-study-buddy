@@ -5,7 +5,7 @@ import { supabase } from "@/app/_lib/supabase/client";
 // =================== SETUP ===================
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
-const DAILY_LIMIT = 20;
+const DAILY_LIMIT = 30;
 
 // Fallback models
 const MODELS = [

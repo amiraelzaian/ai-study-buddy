@@ -180,7 +180,7 @@ export const getStudySessions = cache(async (userId: string) => {
   const supabase = await createSupabaseServer();
   const { data } = await supabase
     .from("study_sessions")
-    .select("*")
+    .select("*, conversations!inner(created_at)")
     .eq("user_id", userId)
     .order("created_at", { ascending: false })
     .limit(10);
