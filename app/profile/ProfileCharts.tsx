@@ -4,17 +4,23 @@ import dynamic from "next/dynamic";
 
 const WeeklyPerformanceChart = dynamic(() => import("./LineChart"), {
   ssr: false,
-  loading: () => <div className="h-48 animate-pulse bg-muted rounded-xl" />,
+  loading: () => (
+    <div className="h-48 mx-5 animate-pulse bg-muted rounded-xl" />
+  ),
 });
 
-const TopicsBySubjectChart = dynamic(() => import("./BarChart"), {
+const ModeBreakdownChart = dynamic(() => import("./PieChart"), {
   ssr: false,
-  loading: () => <div className="h-48 animate-pulse bg-muted rounded-xl" />,
+  loading: () => (
+    <div className="h-48 mx-5 animate-pulse bg-muted rounded-xl" />
+  ),
 });
 
 const Achievements = dynamic(() => import("./Achievements"), {
   ssr: false,
-  loading: () => <div className="h-24 animate-pulse bg-muted rounded-xl" />,
+  loading: () => (
+    <div className="h-24 mx-5 animate-pulse bg-muted rounded-xl" />
+  ),
 });
 
 export type StudySession = {
@@ -36,20 +42,22 @@ export type TopicBySubject = {
 };
 
 type Props = {
-  studySessions: StudySession[];
-  topicsBySubject: TopicBySubject[];
+  studySessions: [];
+  modeCount: [];
   longestStreak: number;
 };
 
 export default function ProfileCharts({
   studySessions,
-  topicsBySubject,
+  modeCount,
   longestStreak,
 }: Props) {
   return (
     <>
       <WeeklyPerformanceChart sessions={studySessions} />
-      <TopicsBySubjectChart topicsBySubject={topicsBySubject} />
+      {/**FOR FUTURE 😴🥱🥱*/}
+      {/* <TopicsBySubjectChart topicsBySubject={topicsBySubject} /> */}
+      <ModeBreakdownChart modes={modeCount} />
       <Achievements sessions={studySessions} longestStreak={longestStreak} />
     </>
   );

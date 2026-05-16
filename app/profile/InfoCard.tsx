@@ -5,6 +5,7 @@ import Image from "next/image";
 import EditProfileModal from "./EditProfileModal";
 import { uploadAvatar } from "../_lib/actions";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 type Profile = {
   profile: {
@@ -29,8 +30,10 @@ function InfoCard({ profile }: Profile) {
     try {
       setUpdating(true);
       await uploadAvatar(profile.id, file);
+      toast.success("Avatar updated successfully");
     } catch (err) {
       console.error(err);
+      toast.error("Something went wrong, try later");
     } finally {
       setUpdating(false);
     }
@@ -39,7 +42,7 @@ function InfoCard({ profile }: Profile) {
   return (
     <aside
       className="flex flex-col items-center gap-4 mt-5 bg-card rounded-2xl
-      mx-auto p-6 shadow-md border border-gray-200
+      mx-auto p-6 shadow-md border 
       hover:border-primary-400 w-full"
     >
       {/* Avatar */}
@@ -89,20 +92,22 @@ function InfoCard({ profile }: Profile) {
 
       {/* Info */}
       <div className="flex flex-col gap-2 w-full text-sm text-muted-foreground">
-        <div className="flex items-center gap-2">
-          <span>📞</span>
-          <p>{profile.phone}</p>
-        </div>
+        {profile?.phone && (
+          <div className="flex items-center gap-2 ">
+            <span>📞</span>
+            <p className="text-sm">{profile.phone}</p>
+          </div>
+        )}
 
         <div className="flex items-center gap-2">
           <span>✉️</span>
-          <p>{profile.email}</p>
+          <p className="text-sm">{profile.email}</p>
         </div>
 
         <div className="flex items-center gap-2">
           <span>📅</span>
 
-          <p>
+          <p className="text-sm">
             Joined{" "}
             {new Date(profile.created_at).toLocaleDateString("en-US", {
               year: "numeric",

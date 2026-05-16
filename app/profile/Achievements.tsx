@@ -17,7 +17,7 @@ type AchievementsProps = {
 
 function Achievements({ sessions, longestStreak }: AchievementsProps) {
   const numOfQuizzes = sessions.filter((s) => s.mode === "quiz").length;
-  const hasPerfectScore = sessions.some((s) => s.score === 100); // ✅ fixed
+  const hasPerfectScore = sessions.some((s) => s.score === 100);
   const topics = sessions.length;
 
   const isEarlyBird = sessions.some((s) => {
@@ -33,7 +33,7 @@ function Achievements({ sessions, longestStreak }: AchievementsProps) {
   const isSpeedDemon = sessions.some((s) => s.score >= 90);
 
   return (
-    <section className="flex flex-col bg-card rounded-xl p-4 mx-8 mb-8 shadow-md border border-gray-200 hover:border-primary-400 transition-all duration-75">
+    <section className="flex flex-col bg-card rounded-xl p-4 mx-8 mb-8 shadow-md border hover:border-primary-400 transition-all duration-75">
       <section className="flex justify-start items-center gap-1 mb-4">
         <span className="text-primary-500 text-xl">
           <Award />
@@ -43,7 +43,7 @@ function Achievements({ sessions, longestStreak }: AchievementsProps) {
 
       <section className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-3">
         {" "}
-        {/* ✅ grid for equal widths */}
+        {/*  grid for equal widths */}
         <AchievementCard
           Icon="🔥"
           topic="7-Day Streak"
@@ -54,13 +54,13 @@ function Achievements({ sessions, longestStreak }: AchievementsProps) {
           topic="First Quiz"
           isActive={numOfQuizzes > 0}
         />{" "}
-        {/* ✅ fixed topic */}
+        {/*  fixed topic */}
         <AchievementCard
           Icon="💯"
           topic="Perfect Score"
           isActive={hasPerfectScore}
         />{" "}
-        {/* ✅ fixed topic & logic */}
+        {/*  fixed topic & logic */}
         <AchievementCard Icon="📚" topic="10 Topics" isActive={topics >= 10} />
         <AchievementCard Icon="🌄" topic="Early Bird" isActive={isEarlyBird} />
         <AchievementCard Icon="🦉" topic="Night Owl" isActive={isNightOwl} />

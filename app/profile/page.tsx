@@ -1,10 +1,10 @@
 import { redirect } from "next/navigation";
 import {
   getCurrentUser,
+  getModecounts,
   getProfile,
   getStreak,
   getStudySessions,
-  getSubjectsByUser,
 } from "../_lib/actions";
 import ProgressSection from "../dashboard/ProgressSection";
 import InfoCard from "./InfoCard";
@@ -17,13 +17,15 @@ async function page() {
   if (!user) redirect("/login");
 
   const userId = user.id;
+  // console.log(userId);
 
   const studySessions = (await getStudySessions(userId)) ?? [];
   // console.log("session", studySessions);
-  const topicsBySubject = (await getSubjectsByUser(userId)) ?? [];
+  // const topicsBySubject = (await getSubjectsByUser(userId)) ?? [];
   // console.log("session", topicsBySubject);
   const streaks = await getStreak(userId);
   const profile = await getProfile(userId);
+  const modes = await getModecounts(userId);
 
   const longestStreak = streaks?.longest_streak ?? 0;
 
@@ -55,7 +57,7 @@ async function page() {
         />
         <ProfileCharts
           studySessions={studySessions ?? []}
-          topicsBySubject={topicsBySubject ?? []}
+          modeCount={modes}
           longestStreak={longestStreak}
         />
       </section>

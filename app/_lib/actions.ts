@@ -156,12 +156,16 @@ export async function saveStudySession(
     .maybeSingle();
 
   if (existing) return { error: null };
-
+  const { data: subjectData } = await supabase
+    .from("subjects")
+    .upsert({ name: subject }, { onConflict: "name" })
+    .select("id")
+    .maybeSingle();
   const { error } = await supabase.from("study_sessions").insert({
     user_id: userId,
     conversation_id: conversationId,
     topic,
-    subject_id: null,
+    subject_id: subjectData?.id,
     mode,
     score: score || null,
   });
@@ -360,3 +364,16 @@ export async function deleteAllHistory(userId: string) {
   if (error) throw new Error("Failed to delete all history");
   revalidatePath(`/study`);
 }
+//============  get modes ==============
+export const getModecounts = cache(
+  async (userId: string): Promise<{ mode: string }[]> => {
+    const supabase = await createSupabaseServer();
+    const { data, error } = await supabase
+      .from("study_sessions")
+      .select("mode")
+      .eq("user_id", userId);
+
+    if (error) return [];
+    return data as { mode: string }[];
+  },
+);

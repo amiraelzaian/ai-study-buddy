@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { updateProfile } from "../_lib/actions";
+import toast from "react-hot-toast";
 
 type Profile = {
   full_name: string;
@@ -57,8 +58,10 @@ export default function EditProfileModal({ profile }: { profile: Profile }) {
     try {
       await updateProfile(profile.id, formData);
       setOpen(false);
+      toast.success("Profile updated successfully");
     } catch (e) {
-      console.error("Update error:", e); // ✅ see exact error
+      console.error("Update error:", e);
+      toast.error("Something went wrong, try later");
       setError(e instanceof Error ? e.message : "Failed to update profile");
     } finally {
       setLoading(false);

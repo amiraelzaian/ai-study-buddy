@@ -42,7 +42,7 @@ export default function WeeklyPerformanceChart({
   return (
     <div
       className="bg-card rounded-xl p-4 mx-8 shadow-md border
-     border-gray-200 hover:border-primary-400 transition-all duration-75 "
+      hover:border-primary-400 transition-all duration-75 "
     >
       <h3 className="font-semibold text-lg mb-4">Weekly Performance</h3>
       <ResponsiveContainer width="100%" height={300}>
@@ -65,6 +65,7 @@ export default function WeeklyPerformanceChart({
               borderRadius: "8px",
               border: "none",
               boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+              color: "#6c63ff",
             }}
             formatter={(value) => [`score : ${value}`]}
           />
