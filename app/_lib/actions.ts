@@ -343,7 +343,9 @@ export async function deleteConversationFromHistory(conversationId: string) {
     .delete()
     .eq("id", conversationId);
 
-  if (error) throw new Error("Failed to delete conversation");
+  if (error) {
+    throw new Error("Failed to delete conversation");
+  }
   revalidatePath(`/study`);
 }
 

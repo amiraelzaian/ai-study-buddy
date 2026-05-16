@@ -1,27 +1,23 @@
 import { Clock, X } from "lucide-react";
 import type { StudySession } from "./MainContent";
 import HistoryItem from "./HistoryItem";
+import SidebarHeader from "./SidebarHeader";
 
 type Props = {
   sessions: StudySession[];
   onClose: () => void;
+  user_id: string;
 };
 
 function SessionsSidebar({ sessions, onClose }: Props) {
+  const length: number = sessions.length;
   return (
     <div className="flex flex-col h-full overflow-hidden">
-      <div className="flex items-center justify-between px-4 py-4 border-b border-border flex-shrink-0">
-        <h2 className="font-semibold text-base text-foreground">
-          Recent Sessions
-        </h2>
-        <button
-          onClick={onClose}
-          className="md:hidden p-1 rounded-lg hover:bg-muted transition-colors"
-          aria-label="Close sidebar"
-        >
-          <X className="w-5 h-5 text-muted-foreground" />
-        </button>
-      </div>
+      <SidebarHeader
+        userId={sessions?.at(0)?.user_id}
+        onClose={onClose}
+        length={length}
+      />
 
       {/* Sessions list */}
       <div className="flex-1 overflow-y-auto py-3 px-3 space-y-2">
