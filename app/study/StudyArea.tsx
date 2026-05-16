@@ -105,13 +105,13 @@ function StudyArea({ userId, onOpenSidebar }: Props) {
       <div className="text-center mb-10 max-w-lg">
         <div className="inline-flex items-center gap-2 bg-purple-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 text-sm font-medium px-3 py-1.5 rounded-full mb-4">
           <Sparkles className="w-3.5 h-3.5" />
-          AI-Powered Learning
+          AI Studdy Buddy
         </div>
         <h1 className="text-3xl font-bold text-foreground mb-2">
           What would you like to learn?
         </h1>
         <p className="text-muted-foreground">
-          Enter any topic and let AI help you master it
+          Enter any topic and let AI buddy help you master it
         </p>
       </div>
 

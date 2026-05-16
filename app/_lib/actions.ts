@@ -224,7 +224,6 @@ export async function updateProfile(
 ) {
   const supabase = await createSupabaseServer();
 
-  // ✅ verify session is valid first
   const {
     data: { user },
     error: authError,

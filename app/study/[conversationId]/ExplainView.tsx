@@ -295,7 +295,11 @@ export default function ExplainView({
 
         {/* Follow-up chat messages */}
         {chatMessages
-          .filter((m) => m.role === "user" || m.content !== content)
+          .filter(
+            (m) =>
+              !(m.role === "user" && m.content === topic) &&
+              m.content !== content,
+          )
           .map((m) => (
             <div
               key={m.id}
