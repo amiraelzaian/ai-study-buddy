@@ -70,16 +70,23 @@ function Header() {
                     alt={user.user_metadata.name}
                   />
                   <AvatarFallback>
-                    {user.user_metadata.name.charAt(0).toUpperCase()}
+                    {(
+                      user.user_metadata?.name ||
+                      user.user_metadata?.full_name ||
+                      "?"
+                    )
+                      .charAt(0)
+                      .toUpperCase()}
                   </AvatarFallback>
                   <AvatarBadge />
                 </Avatar>
               </Link>
               {!isMobile && (
-                <span className="text-forground">
-                  {profile?.full_name.split(" ")[0] ||
-                    user.user_metadata.name.split(" ")[0] ||
-                    user.user_metadata.full_name}
+                <span className="text-foreground">
+                  {profile?.full_name?.split(" ")[0] ||
+                    user.user_metadata?.name?.split(" ")[0] ||
+                    user.user_metadata?.full_name?.split(" ")[0] ||
+                    "User"}
                 </span>
               )}
               <form action={signOut}>
