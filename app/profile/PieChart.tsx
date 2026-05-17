@@ -28,41 +28,49 @@ export default function ModeBreakdownChart({ modes }: { modes: ModeCount[] }) {
 
   return (
     <div
-      className="bg-card rounded-xl p-2 mx-8 shadow-md border hover:border-primary-400 transition-all duration-75"
+      className="bg-card rounded-xl p-4 mx-8 shadow-md border hover:border-primary-400 transition-all duration-75"
       tabIndex={-1}
     >
       <h3 className="font-semibold text-lg mb-4">Study Modes</h3>
-      <ResponsiveContainer
-        width="100%"
-        height={300}
-        style={{ outline: "none" }}
-      >
-        <PieChart style={{ outline: "none" }}>
-          <Pie
-            data={chartData}
-            cx="50%"
-            cy="50%"
-            innerRadius={70}
-            outerRadius={110}
-            paddingAngle={3}
-            dataKey="value"
-          >
-            {chartData.map((_, i) => (
-              <Cell key={i} fill={COLORS[i % COLORS.length]} />
-            ))}
-          </Pie>
-          <Tooltip
-            contentStyle={{
-              borderRadius: "8px",
-              border: "none",
-              boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-              color: "blueviolet",
-            }}
-            formatter={(value, name) => [`Count: ${value}`, name]}
-          />
-          <Legend />
-        </PieChart>
-      </ResponsiveContainer>
+      {modes.length > 0 ? (
+        <ResponsiveContainer
+          width="100%"
+          height={300}
+          style={{ outline: "none" }}
+        >
+          <PieChart style={{ outline: "none" }}>
+            <Pie
+              data={chartData}
+              cx="50%"
+              cy="50%"
+              innerRadius={70}
+              outerRadius={110}
+              paddingAngle={3}
+              dataKey="value"
+            >
+              {chartData.map((_, i) => (
+                <Cell key={i} fill={COLORS[i % COLORS.length]} />
+              ))}
+            </Pie>
+            <Tooltip
+              contentStyle={{
+                borderRadius: "8px",
+                border: "none",
+                boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+                color: "blueviolet",
+              }}
+              formatter={(value, name) => [`Count: ${value}`, name]}
+            />
+            <Legend />
+          </PieChart>
+        </ResponsiveContainer>
+      ) : (
+        <div className="flex items-center justify-center h-[300px]">
+          <p className="text-muted-foreground text-sm">
+            Study more to view graph
+          </p>
+        </div>
+      )}
     </div>
   );
 }
