@@ -41,7 +41,6 @@ function Header() {
       getProfile(user.id).then(setProfile).catch(console.error);
     }
   }, [user?.id]);
-  console.log(profile);
   return (
     <section
       className="w-full fixed top-0 left-0 bg-card px-2 md:px-4 py-2
