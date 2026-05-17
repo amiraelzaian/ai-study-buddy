@@ -1,10 +1,13 @@
 "use client";
 import { ArrowUp, ArrowDown } from "lucide-react";
+// import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function ScrollButtons() {
   const [atTop, setAtTop] = useState(true);
   const [atBottom, setAtBottom] = useState(false);
+  // const pathname = usePathname();
+  // console.log(pathname);
 
   useEffect(() => {
     const handleScroll = () => {

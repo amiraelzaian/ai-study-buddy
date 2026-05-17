@@ -9,19 +9,39 @@ import {
 } from "@/components/ui/avatar";
 import Theme from "./Theme";
 import { useScreenSize } from "@/hooks/useScreen";
-import { signOut } from "@/app/_lib/actions";
+import { getProfile, signOut } from "@/app/_lib/actions";
 import { ArrowLeft, LogOut } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
+type Profile = {
+  id: string;
+  full_name: string;
+  email: string;
+  avatar_url: string | null;
+  Bio: string;
+  phone: string;
+  created_at: string;
+};
 function Header() {
   const { user, loading } = useUser();
   const { isMobile } = useScreenSize();
+
   const router = useRouter();
   let pathname = usePathname();
   pathname = pathname.split("/")[1];
+
   const isDshboard = pathname === "dashboard";
+  const [profile, setProfile] = useState<Profile | null>(null);
+
+  useEffect(() => {
+    if (user?.id) {
+      getProfile(user.id).then(setProfile).catch(console.error);
+    }
+  }, [user?.id]);
+  console.log(profile);
   return (
     <section
       className="w-full fixed top-0 left-0 bg-card px-2 md:px-4 py-2
@@ -44,11 +64,10 @@ function Header() {
           <Theme />
           {!loading && user && (
             <>
-              {" "}
               <Link href="/profile">
                 <Avatar size="default" className="shadow-md cursor-pointer">
                   <AvatarImage
-                    src={user.user_metadata.avatar_url}
+                    src={profile?.avatar_url || user.user_metadata.avatar_url}
                     alt={user.user_metadata.name}
                   />
                   <AvatarFallback>
@@ -59,7 +78,8 @@ function Header() {
               </Link>
               {!isMobile && (
                 <span className="text-forground">
-                  {user.user_metadata.name.split(" ")[0] ||
+                  {profile?.full_name.split(" ")[0] ||
+                    user.user_metadata.name.split(" ")[0] ||
                     user.user_metadata.full_name}
                 </span>
               )}

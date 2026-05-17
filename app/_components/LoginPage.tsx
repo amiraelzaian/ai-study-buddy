@@ -17,6 +17,8 @@ import Robot from "./Robot";
 import { signInWithEmail, signInWithGoogle } from "@/app/_lib/actions";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Logo from "./Logo";
+import { Brain } from "lucide-react";
 
 type FormData = {
   email: string;
@@ -68,12 +70,20 @@ export default function LoginPage() {
 
   return (
     <div className="bg-background flex flex-col justify-center items-center min-h-screen w-full px-4 gap-4">
-      <div className="w-36 h-36">
-        <Robot />
-      </div>
-
       <Card className="w-full md:max-w-sm pt-6 bg-card">
-        <CardHeader>
+        <CardHeader className="flex flex-col items-center justify-center ">
+          <div
+            className="relative flex items-center justify-center w-10 h-10 rounded-xl 
+        bg-gradient-to-br  from-primary-500 to-primary-800 shadow-lg
+       shadow-primary-500/30 transition-transform duration-200 group-hover:scale-105"
+          >
+            <Brain className="w-5 h-5 text-white" />
+            <span
+              className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5
+         bg-emerald-400 rounded-full border-2 
+         border-background animate-pulse"
+            />
+          </div>
           <CardTitle className="text-center text-xl">Login </CardTitle>
           <CardDescription className="text-center">
             AI study Buddy, Your daily Buddy
