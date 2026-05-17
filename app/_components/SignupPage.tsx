@@ -15,6 +15,7 @@ import { Brain } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 
 type FormData = {
   fName: string;
@@ -46,10 +47,11 @@ export default function SignupPage() {
       fullName,
       phone,
     );
-
+    if (!result?.error) toast.success("Account is created successfully");
     if (result?.error) {
       setError(result.error);
       setLoading(false);
+      toast.error("Something went wrong");
     }
   }
 

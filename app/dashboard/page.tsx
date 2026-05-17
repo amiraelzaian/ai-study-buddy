@@ -1,9 +1,15 @@
+import { Metadata } from "next";
 import { getCurrentUser, getStreak, getStudySessions } from "../_lib/actions";
 import ActivityTable from "./ActivityTable";
 import Footer from "./Footer";
 import ProgressSection from "./ProgressSection";
 import StudySessionChoice from "./StudySessionChoice";
 import WelcomeSection from "./WelcomeSection";
+
+export const metadata: Metadata = {
+  title: "AI study buddy || dashboard",
+  description: "Your powered AI study buddy to enhance your study sessions",
+};
 
 export default async function Page() {
   const user = await getCurrentUser();

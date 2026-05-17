@@ -1,7 +1,11 @@
 import Link from "next/link";
 import Footer from "@/app/dashboard/Footer";
 import Logo from "@/app/_components/Logo";
-
+import { Metadata } from "next";
+export const metadata: Metadata = {
+  title: "AI study buddy || Home",
+  description: "Your powered AI study buddy to enhance your study sessions",
+};
 export default function Home() {
   return (
     <main className="min-h-screen bg-background text-foreground overflow-hidden">

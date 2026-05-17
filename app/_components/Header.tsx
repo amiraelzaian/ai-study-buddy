@@ -15,6 +15,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 type Profile = {
   id: string;
@@ -89,15 +90,18 @@ function Header() {
                     "User"}
                 </span>
               )}
-              <form action={signOut}>
-                <button
-                  type="submit"
-                  className="flex items-center gap-1 text-sm text-muted-foreground hover:text-red-700 transition-colors"
-                >
-                  <LogOut className="w-4 h-4" />
-                  {!isMobile && <span>Logout</span>}
-                </button>
-              </form>
+              <button
+                type="button"
+                onClick={async () => {
+                  await signOut();
+                  toast.success("Logged out successfully");
+                  router.push("/");
+                }}
+                className="flex items-center gap-1 text-sm text-muted-foreground hover:text-red-700 transition-colors"
+              >
+                <LogOut className="w-4 h-4" />
+                {!isMobile && <span>Logout</span>}
+              </button>
             </>
           )}
         </div>

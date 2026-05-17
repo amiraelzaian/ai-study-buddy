@@ -4,8 +4,56 @@ import { redirect } from "next/navigation";
 import { createSupabaseServer } from "./supabase/server";
 import { cache } from "react";
 import { revalidatePath } from "next/cache";
+//= ================ SignUp
+// export async function signUpWithEmail(
+//   email: string,
+//   password: string,
+//   fullName: string,
+//   phone: string,
+// ) {
+//   const supabase = await createSupabaseServer();
+//   const { data, error } = await supabase.auth.signUp({
+//     email,
+//     password,
+//     options: {
+//       data: {
+//         full_name: fullName,
+//         phone,
+//       },
+//     },
+//   });
 
-// =================== SIGN UP ===================
+//   if (error) return { error: error.message };
+//   if (!data.user) return { error: "Something went wrong" };
+
+//   const userId = data.user.id;
+
+//   const { error: profileError } = await supabase.from("profiles").insert({
+//     id: userId,
+//     email,
+//     full_name: fullName,
+//     phone,
+//   });
+//   if (profileError) return { error: profileError.message };
+
+//   const { error: streakError } = await supabase.from("streaks").insert({
+//     user_id: userId,
+//     current_streak: 0,
+//     longest_streak: 0,
+//   });
+//   if (streakError) return { error: streakError.message };
+
+//   const { error: usageError } = await supabase.from("ai_usage").insert({
+//     user_id: userId,
+//     requests_count: 0,
+//     date: new Date().toISOString().split("T")[0],
+//   });
+//   if (usageError) return { error: usageError.message };
+//   if (!data.session) {
+//     redirect("/check-email"); // tell user to check their email
+//   }
+//   redirect("/dashboard");
+// }
 export async function signUpWithEmail(
   email: string,
   password: string,
@@ -13,33 +61,27 @@ export async function signUpWithEmail(
   phone: string,
 ) {
   const supabase = await createSupabaseServer();
-  const { data, error } = await supabase.auth.signUp({ email, password });
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      data: {
+        full_name: fullName,
+        phone,
+      },
+    },
+  });
 
   if (error) return { error: error.message };
   if (!data.user) return { error: "Something went wrong" };
 
-  await supabase.from("profiles").upsert({
-    id: data.user.id,
-    email,
-    full_name: fullName,
-    phone,
-  });
-
-  await supabase.from("streaks").upsert({
-    user_id: data.user.id,
-    current_streak: 0,
-    longest_streak: 0,
-  });
-
-  await supabase.from("ai_usage").upsert({
-    user_id: data.user.id,
-    requests_count: 0,
-    date: new Date().toISOString().split("T")[0],
-  });
+  // No session means email confirmation is pending
+  if (!data.session) {
+    redirect("/check-email");
+  }
 
   redirect("/dashboard");
 }
-
 // =================== SIGN IN ===================
 export async function signInWithEmail(email: string, password: string) {
   const supabase = await createSupabaseServer();

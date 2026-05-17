@@ -13,12 +13,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useForm } from "react-hook-form";
-import Robot from "./Robot";
 import { signInWithEmail, signInWithGoogle } from "@/app/_lib/actions";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import Logo from "./Logo";
 import { Brain } from "lucide-react";
+import toast from "react-hot-toast";
 
 type FormData = {
   email: string;
@@ -42,10 +41,12 @@ export default function LoginPage() {
     setError("");
 
     const result = await signInWithEmail(data.email, data.password);
+    if (!result?.error) toast.success("Logged in successfully");
 
     if (result?.error) {
       setError(result.error);
       setLoading(false);
+      toast.error("Something went wrong, try later");
       return;
     }
 
@@ -56,10 +57,12 @@ export default function LoginPage() {
     setGoogling(true);
 
     const result = await signInWithGoogle();
+    if (!result?.error) toast.success("Logged in successfully");
 
     if (result?.error) {
       setError(result.error);
       setGoogling(false);
+      toast.error("Something went wrong, try later");
       return;
     }
 

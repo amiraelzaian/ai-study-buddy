@@ -6,7 +6,12 @@ import {
 import ExplainView from "./ExplainView";
 import QuizView from "./QuizView";
 import FlashcardView from "./FlashcardView";
+import { Metadata } from "next";
 
+export const metadata: Metadata = {
+  title: "AI study buddy || session",
+  description: "Your powered AI study buddy to enhance your study sessions",
+};
 type Props = {
   params: Promise<{ conversationId: string }>;
 };

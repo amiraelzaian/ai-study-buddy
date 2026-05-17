@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { supabase } from "@/app/_lib/supabase/client";
+// import { supabase } from "@/app/_lib/supabase/client";
+import { createSupabaseServer } from "@/app/_lib/supabase/server";
 
 // =================== SETUP ===================
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
@@ -48,6 +49,7 @@ async function chatWithFallback(
 
 // =================== API ROUTE ===================
 export async function POST(request: Request) {
+  const supabase = await createSupabaseServer();
   try {
     const { question, subject, mode, userId, conversationId } =
       await request.json();
@@ -106,13 +108,21 @@ export async function POST(request: Request) {
           parts: [{ text: m.content }],
         })) || [];
     } else {
-      const { data: newConversation } = await supabase
+      const { data: newConversation, error: convError } = await supabase
         .from("conversations")
         .insert({ user_id: userId, subject, mode })
         .select()
         .maybeSingle();
 
-      currentConversationId = newConversation?.id;
+      if (convError || !newConversation) {
+        console.error("Conversation insert failed:", convError);
+        return NextResponse.json(
+          { error: "Failed to create conversation" },
+          { status: 500 },
+        );
+      }
+
+      currentConversationId = newConversation.id;
     }
 
     // =================== 3. PROMPTS ===================

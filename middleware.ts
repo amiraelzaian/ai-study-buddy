@@ -10,7 +10,8 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith("/auth") ||
     pathname === "/login" ||
     pathname === "/signup" ||
-    pathname === "/"
+    pathname === "/" ||
+    pathname === "/check-email"
   ) {
     return supabaseResponse;
   }

@@ -9,7 +9,11 @@ import {
 import ProgressSection from "../dashboard/ProgressSection";
 import InfoCard from "./InfoCard";
 import ProfileCharts from "./ProfileCharts";
-
+import { Metadata } from "next";
+export const metadata: Metadata = {
+  title: "AI study buddy || profile",
+  description: "Your powered AI study buddy to enhance your study sessions",
+};
 export const revalidate = 60 * 5;
 
 async function page() {
