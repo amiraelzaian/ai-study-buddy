@@ -69,7 +69,7 @@ export async function signInWithGoogle() {
 export async function signOut() {
   const supabase = await createSupabaseServer();
   await supabase.auth.signOut();
-  redirect("/login");
+  redirect("/");
 }
 
 // =================== GET USER ===================

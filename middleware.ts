@@ -5,11 +5,12 @@ export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
   const pathname = request.nextUrl.pathname;
 
-  // ✅ skip middleware for auth and login/signup pages
+  //  skip middleware for auth and login/signup pages
   if (
     pathname.startsWith("/auth") ||
     pathname === "/login" ||
-    pathname === "/signup"
+    pathname === "/signup" ||
+    pathname === "/"
   ) {
     return supabaseResponse;
   }
@@ -40,7 +41,7 @@ export async function middleware(request: NextRequest) {
     error,
   } = await supabase.auth.getUser();
 
-  // ✅ handle bad token — clear and redirect to login
+  // handle bad token — clear and redirect to login
   if (error?.status === 400) {
     await supabase.auth.signOut();
     const response = NextResponse.redirect(new URL("/login", request.url));
@@ -58,6 +59,9 @@ export async function middleware(request: NextRequest) {
     (pathname.startsWith("/dashboard") || pathname.startsWith("/profile"))
   ) {
     return NextResponse.redirect(new URL("/login", request.url));
+  }
+  if (user && pathname === "/") {
+    return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
   return supabaseResponse;
