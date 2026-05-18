@@ -42,8 +42,8 @@ export type TopicBySubject = {
 };
 
 type Props = {
-  studySessions: [];
-  modeCount: [];
+  studySessions: StudySession[];
+  modeCount: { mode: string }[];
   longestStreak: number;
 };
 
