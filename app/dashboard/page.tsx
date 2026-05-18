@@ -5,6 +5,7 @@ import Footer from "./Footer";
 import ProgressSection from "./ProgressSection";
 import StudySessionChoice from "./StudySessionChoice";
 import WelcomeSection from "./WelcomeSection";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "AI study buddy || dashboard",
@@ -13,6 +14,7 @@ export const metadata: Metadata = {
 
 export default async function Page() {
   const user = await getCurrentUser();
+  if (!user) redirect("/login");
   const studySessions = (await getStudySessions(user?.id)) ?? [];
   const streaks = (await getStreak(user?.id)) ?? [];
 
