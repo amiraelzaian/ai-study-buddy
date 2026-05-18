@@ -1,18 +1,20 @@
 import ActivityRow from "./ActivityRow";
 
-export const revalidate = 60 * 5;
+export const revalidate = 300;
 type StudySession = {
   created_at: string;
   id: string;
   mode: string;
   topic: string;
   score: number | null;
+  user_id: string;
+  subject_id: string | null;
 };
 
 async function ActivityTable({
   studySessions,
 }: {
-  studySessions: StudySession[]; // ✅ array not single object
+  studySessions: StudySession[];
 }) {
   const recentSessions = [...studySessions]
     .sort(
