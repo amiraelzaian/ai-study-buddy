@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   title: "AI study buddy || profile",
   description: "Your powered AI study buddy to enhance your study sessions",
 };
-export const revalidate = 60 * 5;
+export const revalidate = 300;
 
 async function page() {
   const user = await getCurrentUser();
