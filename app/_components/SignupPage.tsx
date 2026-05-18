@@ -47,7 +47,7 @@ export default function SignupPage() {
       fullName,
       phone,
     );
-    if (!result?.error) toast.success("Account is created successfully");
+    //if (!result?.error) toast.success("Account is created successfully");
     if (result?.error) {
       setError(result.error);
       setLoading(false);
@@ -136,7 +136,7 @@ export default function SignupPage() {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="amira@example.com"
+                  placeholder="user@example.com"
                   {...register("email", { required: "Email is required" })}
                 />
                 {errors.email && (

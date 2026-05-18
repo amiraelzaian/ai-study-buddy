@@ -41,7 +41,7 @@ export default function LoginPage() {
     setError("");
 
     const result = await signInWithEmail(data.email, data.password);
-    if (!result?.error) toast.success("Logged in successfully");
+    // if (!result?.error) toast.success("Logged in successfully");
 
     if (result?.error) {
       setError(result.error);
@@ -57,7 +57,7 @@ export default function LoginPage() {
     setGoogling(true);
 
     const result = await signInWithGoogle();
-    if (!result?.error) toast.success("Logged in successfully");
+    //if (!result?.error) toast.success("Logged in successfully");
 
     if (result?.error) {
       setError(result.error);
@@ -106,7 +106,7 @@ export default function LoginPage() {
                 <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
-                  placeholder="amira@example.com"
+                  placeholder="user@example.com"
                   {...register("email", {
                     required: "Email is required",
                   })}
