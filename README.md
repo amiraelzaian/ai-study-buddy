@@ -40,7 +40,7 @@ Live Demo → [ai-study-buddy-blond-gamma.vercel.app](https://ai-study-buddy-blo
 
 - Node.js 18+
 - A Supabase project
-- A Google Gemini API key
+- A Cerebras AI API key
 
 ### Installation
 
@@ -63,7 +63,7 @@ Create a `.env.local` file in the root:
 ```env
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-GEMINI_API_KEY=your_gemini_api_key
+CEREBRAS_API_KEY=your_gemini_api_key
 ```
 
 ### Run locally
