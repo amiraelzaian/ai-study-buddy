@@ -1,6 +1,6 @@
 # 🧠 AI Study Buddy
 
-> Your daily AI-powered study companion — learn smarter, not harder.
+> Your daily AI-powered study companion — learn smarter, not harder
 
 Live Demo → [ai-study-buddy-blond-gamma.vercel.app](https://ai-study-buddy-blond-gamma.vercel.app)
 
