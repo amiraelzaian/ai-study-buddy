@@ -10,7 +10,7 @@ const cerebras = new OpenAI({
   baseURL: "https://api.cerebras.ai/v1",
 });
 
-const DAILY_LIMIT = 20;
+const DAILY_LIMIT = 30;
 
 async function generateAIResponse(
   history: { role: string; parts: { text: string }[] }[],

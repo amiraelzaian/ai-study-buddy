@@ -1,6 +1,10 @@
 import { createSupabaseServer } from "@/app/_lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 
+// recieve auth callback
+// المفروض اسمي الفايل اسم تاني بس مكسله اغير الاعدادات بتاعت سوبابيز وجوجل اوث
+// name is callback/route.ts
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const code = searchParams.get("code");
