@@ -24,7 +24,7 @@ async function generateAIResponse(
   messages.push({ role: "user", content: prompt });
 
   const completion = await cerebras.chat.completions.create({
-    model: "llama-3.1-8b",
+    model: "llama-3.3-70b",
     messages: [
       {
         role: "system",
