@@ -6,8 +6,8 @@ import { createSupabaseServer } from "@/app/_lib/supabase/server";
 
 // =================== SETUP ===================
 const cerebras = new OpenAI({
-  apiKey: process.env.CEREBRAS_API_KEY,
-  baseURL: "https://api.cerebras.ai/v1",
+  apiKey: process.env.GROQ_API_KEY,
+  baseURL: "https://api.groq.com/openai/v1",
 });
 
 const DAILY_LIMIT = 30;
@@ -24,7 +24,7 @@ async function generateAIResponse(
   messages.push({ role: "user", content: prompt });
 
   const completion = await cerebras.chat.completions.create({
-    model: "llama-3.3-70b",
+    model: "llama-3.3-70b-versatile",
     messages: [
       {
         role: "system",
