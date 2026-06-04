@@ -1,4 +1,5 @@
 # AI Study Buddy — Bugs & Fixes Documentation
+##bugs during development
 
 ## 1. Supabase Rate Limit (429)
 
